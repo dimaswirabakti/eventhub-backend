@@ -1,4 +1,4 @@
-import type { ErrorRequestHandler } from 'express';
+import type { ErrorRequestHandler, RequestHandler } from 'express';
 import { ZodError } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 import { AppError } from '@/common/errors/app-error.js';
@@ -33,7 +33,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   });
 };
 
-export const notFoundHandler: ErrorRequestHandler = (req, res) => {
+export const notFoundHandler: RequestHandler = (req, res) => {
   res.status(StatusCodes.NOT_FOUND).json({
     success: false,
     message: `Route ${req.method} ${req.originalUrl} not found`,

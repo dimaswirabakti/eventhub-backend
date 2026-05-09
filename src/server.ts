@@ -10,12 +10,15 @@ const server = app.listen(env.PORT, () => {
 });
 
 // Graceful shutdown
-const shutdown = async (signal: string) => {
+const shutdown = (signal: string): void => {
   logger.info(`${signal} received, shutting down gracefully...`);
-  server.close(async () => {
-    await prisma.$disconnect();
-    logger.info('Server closed');
-    process.exit(0);
+
+  server.close(() => {
+    void (async () => {
+      await prisma.$disconnect();
+      logger.info('Server closed');
+      process.exit(0);
+    })();
   });
 
   // Force exit setelah 10 detik
@@ -25,8 +28,8 @@ const shutdown = async (signal: string) => {
   }, 10_000);
 };
 
-process.on('SIGTERM', () => void shutdown('SIGTERM'));
-process.on('SIGINT', () => void shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 process.on('uncaughtException', (err) => {
   logger.fatal({ err }, 'Uncaught exception');
