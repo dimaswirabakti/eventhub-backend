@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Prisma
+prisma/migrations/dev.db*
+
+# Firebase service account
+firebase-service-account.json
+*-firebase-adminsdk-*.json
+gcs-service-account.json
+
+# Misc
+.cache/
+.tmp/
+
+/src/generated/prisma
