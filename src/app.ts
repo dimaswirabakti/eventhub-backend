@@ -8,6 +8,7 @@ import { logger } from '@/config/logger.js';
 import { errorHandler, notFoundHandler } from '@/middlewares/error.middleware.js';
 import { authRoutes } from '@/modules/auth/auth.routes.js';
 import { eventsRoutes, catalogRoutes } from '@/modules/events/events.routes.js';
+import { aiRoutes } from '@/modules/ai/ai.routes.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -38,6 +39,7 @@ export const createApp = (): Express => {
   app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
   app.use(`/api/${env.API_VERSION}/events`, eventsRoutes);
   app.use(`/api/${env.API_VERSION}/catalog`, catalogRoutes);
+  app.use(`/api/${env.API_VERSION}/ai`, aiRoutes);
 
   // 404 & error handler
   app.use(notFoundHandler);
