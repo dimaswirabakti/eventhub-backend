@@ -8,6 +8,10 @@ datasource db {
   extensions = [vector]
 }
 
+// ============================================
+// USER & AUTH
+// ============================================
+
 model User {
   id           String   @id @default(cuid())
   firebaseUid  String   @unique
@@ -15,9 +19,20 @@ model User {
   name         String
   role         UserRole
   tokenBalance Int      @default(0)
+  isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Relations (1:1, salah satu saja yang terisi sesuai role)
+  eoProfile      EOProfile?
+  companyProfile CompanyProfile?
+
+  // Reverse relations
+  tokenTransactions TokenTransaction[]
+  tokenUsages       TokenUsage[]
+  messagesSent      Message[]
+
+  @@index([role])
   @@map("users")
 }
 
@@ -25,4 +40,293 @@ enum UserRole {
   EO
   COMPANY
   ADMIN
+}
+
+// ============================================
+// EO PROFILE (Panitia)
+// ============================================
+
+model EOProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  organizationName String
+  organizationType OrgType
+  campus           String?
+  phoneNumber      String
+  city             String
+  description      String?
+  logoUrl          String?
+  isVerified       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[]
+
+  @@map("eo_profiles")
+}
+
+enum OrgType {
+  BEM
+  HIMA
+  UKM
+  COMMUNITY
+  OTHER
+}
+
+// ============================================
+// COMPANY PROFILE (Brand/Sponsor)
+// ============================================
+
+model CompanyProfile {
+  id            String                  @id @default(cuid())
+  userId        String                  @unique
+  companyName   String
+  industry      String
+  description   String
+  logoUrl       String?
+  website       String?
+  phoneNumber   String
+  city          String
+  targetAudience String?                // ringkasan target audiens (untuk embedding)
+  embedding     Unsupported("vector(768)")?
+  isVerified    Boolean                 @default(false)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  user   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offers SponsorshipOffer[]
+
+  @@index([industry])
+  @@map("company_profiles")
+}
+
+// ============================================
+// EVENT
+// ============================================
+
+model Event {
+  id              String      @id @default(cuid())
+  eoProfileId     String
+  title           String
+  slug            String      @unique
+  description     String
+  category        EventCategory
+  theme           String?
+  bannerUrl       String?
+
+  // Waktu & lokasi
+  startDate       DateTime
+  endDate         DateTime
+  city            String
+  venue           String?
+  isOnline        Boolean     @default(false)
+
+  // Target audiens
+  expectedAttendees Int
+  audienceAgeMin    Int
+  audienceAgeMax    Int
+  audienceInterests String[]  // ["technology", "design", "startup"]
+
+  // Status & embedding untuk matchmaking
+  status          EventStatus @default(DRAFT)
+  embedding       Unsupported("vector(768)")?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  publishedAt     DateTime?
+
+  // Relations
+  eoProfile EOProfile           @relation(fields: [eoProfileId], references: [id], onDelete: Cascade)
+  proposal  Proposal?
+  tiers     SponsorshipTier[]
+  offers    SponsorshipOffer[]
+
+  @@index([status])
+  @@index([category])
+  @@index([city])
+  @@index([startDate])
+  @@map("events")
+}
+
+enum EventCategory {
+  TECHNOLOGY
+  BUSINESS
+  ARTS
+  SPORTS
+  EDUCATION
+  SOCIAL
+  ENTERTAINMENT
+  COMPETITION
+  CONFERENCE
+  WORKSHOP
+  OTHER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  CANCELLED
+}
+
+// ============================================
+// PROPOSAL (Dokumen melekat ke Event, 1:1)
+// ============================================
+
+model Proposal {
+  id          String         @id @default(cuid())
+  eventId     String         @unique
+  source      ProposalSource
+  fileUrl     String?        // jika upload PDF
+  content     String?        // jika hasil generate AI (markdown/JSON)
+  aiScore     Int?           // skor smart review (0-100)
+  aiFeedback  Json?          // hasil smart review (list issues)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("proposals")
+}
+
+enum ProposalSource {
+  UPLOAD     // EO upload PDF sendiri
+  GENERATED  // dibuat AI via Proposal Builder
+}
+
+// ============================================
+// SPONSORSHIP TIER (Paket sponsorship per event)
+// ============================================
+
+model SponsorshipTier {
+  id          String   @id @default(cuid())
+  eventId     String
+  name        String   // "Gold", "Silver", "Bronze", "Platinum"
+  price       Int      // dalam Rupiah
+  benefits    String[] // list benefit ["Logo di banner utama", "Booth eksklusif", ...]
+  maxSlots    Int      @default(1) // berapa company bisa ambil tier ini
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event  Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  offers SponsorshipOffer[]
+
+  @@index([eventId])
+  @@map("sponsorship_tiers")
+}
+
+// ============================================
+// SPONSORSHIP OFFER (Transaksi: Company → Event)
+// ============================================
+
+model SponsorshipOffer {
+  id               String        @id @default(cuid())
+  eventId          String
+  companyProfileId String
+  tierId           String
+  status           OfferStatus   @default(PENDING)
+  message          String?       // pesan awal dari company saat make offer
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  respondedAt      DateTime?     // saat EO accept/reject
+  closedAt         DateTime?     // saat deal closed/cancelled
+
+  event          Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  companyProfile CompanyProfile  @relation(fields: [companyProfileId], references: [id], onDelete: Cascade)
+  tier           SponsorshipTier @relation(fields: [tierId], references: [id])
+  messages       Message[]
+
+  @@unique([eventId, companyProfileId]) // 1 company hanya bisa offer 1x per event
+  @@index([status])
+  @@index([eventId])
+  @@index([companyProfileId])
+  @@map("sponsorship_offers")
+}
+
+enum OfferStatus {
+  PENDING       // baru dibuat, menunggu respon EO
+  UNDER_REVIEW  // EO sudah baca
+  NEGOTIATING   // sedang chat negosiasi
+  ACCEPTED      // deal closed
+  REJECTED      // EO tolak
+  CANCELLED     // Company tarik offer
+}
+
+// ============================================
+// MESSAGE (Async chat dalam Offer)
+// ============================================
+
+model Message {
+  id        String   @id @default(cuid())
+  offerId   String
+  senderId  String   // User ID (bukan profile ID)
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  offer  SponsorshipOffer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  sender User             @relation(fields: [senderId], references: [id])
+
+  @@index([offerId, createdAt])
+  @@map("messages")
+}
+
+// ============================================
+// TOKEN TRANSACTION (Pembelian via Midtrans)
+// ============================================
+
+model TokenTransaction {
+  id              String            @id @default(cuid())
+  userId          String
+  midtransOrderId String            @unique
+  packageName     String            // "Starter", "Pro", "Premium"
+  tokenAmount     Int               // jumlah token yang dibeli
+  priceIdr        Int               // harga dalam Rupiah
+  status          TransactionStatus @default(PENDING)
+  paymentMethod   String?           // "qris", "gopay", "bca_va", dll
+  paidAt          DateTime?
+  expiredAt       DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("token_transactions")
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+// ============================================
+// TOKEN USAGE (Log pemakaian token)
+// ============================================
+
+model TokenUsage {
+  id          String         @id @default(cuid())
+  userId      String
+  feature     TokenFeature
+  cost        Int            // jumlah token yang dipakai
+  referenceId String?        // ID dari resource terkait (eventId, offerId, dll)
+  metadata    Json?          // info tambahan
+  createdAt   DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("token_usages")
+}
+
+enum TokenFeature {
+  PROPOSAL_BUILDER  // generate proposal via AI
+  SMART_REVIEW      // AI cek skor proposal
+  UNLOCK_CONTACT    // unlock contact info company
 }

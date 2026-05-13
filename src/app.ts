@@ -6,6 +6,7 @@ import { pinoHttp } from 'pino-http';
 import { env } from '@/config/env.js';
 import { logger } from '@/config/logger.js';
 import { errorHandler, notFoundHandler } from '@/middlewares/error.middleware.js';
+import { authRoutes } from '@/modules/auth/auth.routes.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -31,6 +32,9 @@ export const createApp = (): Express => {
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  // API routes
+  app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
 
   // 404 & error handler
   app.use(notFoundHandler);
