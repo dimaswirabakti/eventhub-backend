@@ -12,31 +12,29 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   DIRECT_URL: z.string().url().optional(),
 
-  // Firebase
+  // Firebase Auth
   FIREBASE_PROJECT_ID: z.string().min(1),
   FIREBASE_CLIENT_EMAIL: z.string().email(),
   FIREBASE_PRIVATE_KEY: z.string().min(1),
+
+  // Firebase Storage
+  FIREBASE_STORAGE_BUCKET: z.string().min(1),
 
   // Gemini
   GEMINI_API_KEY: z.string().min(1),
   GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
   GEMINI_EMBEDDING_MODEL: z.string().default('text-embedding-004'),
 
-  // GCS — optional untuk sekarang
-  GCS_PROJECT_ID: z.string().optional(),
-  GCS_BUCKET_NAME: z.string().default('eventhub-uploads'),
-  GCS_KEY_FILE_PATH: z.string().optional(),
-
-  // Redis — optional untuk sekarang
+  // Redis
   UPSTASH_REDIS_REST_URL: z.string().url().or(z.literal('')).optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
-  // Midtrans — optional untuk sekarang
+  // Midtrans
   MIDTRANS_SERVER_KEY: z.string().optional(),
   MIDTRANS_CLIENT_KEY: z.string().optional(),
   MIDTRANS_IS_PRODUCTION: z.coerce.boolean().default(false),
 
-  // Email — optional untuk sekarang
+  // Email
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default('noreply@eventhub.id').optional(),
 });

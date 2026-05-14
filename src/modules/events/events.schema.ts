@@ -1,4 +1,9 @@
 import { z } from 'zod';
+import { isValidFirebaseStorageUrl } from '@/common/utils/storage.js';
+
+const firebaseStorageUrl = z.string().url().refine(isValidFirebaseStorageUrl, {
+  message: 'URL must be from Firebase Storage bucket of this project',
+});
 
 const eventCategoryEnum = z.enum([
   'TECHNOLOGY',
@@ -21,7 +26,7 @@ export const createEventSchema = z
     description: z.string().min(20).max(5000),
     category: eventCategoryEnum,
     theme: z.string().max(100).optional(),
-    bannerUrl: z.string().url().optional(),
+    bannerUrl: firebaseStorageUrl.optional(),
 
     startDate: z.coerce.date(),
     endDate: z.coerce.date(),
@@ -49,7 +54,7 @@ export const updateEventSchema = z.object({
   description: z.string().min(20).max(5000).optional(),
   category: eventCategoryEnum.optional(),
   theme: z.string().max(100).optional(),
-  bannerUrl: z.string().url().optional(),
+  bannerUrl: firebaseStorageUrl.optional(),
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
   city: z.string().min(2).max(50).optional(),
@@ -75,7 +80,7 @@ export const updateTierSchema = createTierSchema.partial();
 export const setProposalSchema = z
   .object({
     source: z.enum(['UPLOAD', 'GENERATED']),
-    fileUrl: z.string().url().optional(),
+    fileUrl: firebaseStorageUrl.optional(),
     content: z.string().min(50).optional(),
   })
   .refine((data) => data.fileUrl || data.content, {

@@ -1,0 +1,95 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    // User sudah login
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // User adalah owner berdasarkan userId di path
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // File size limit (dalam bytes)
+    function isUnderSize(maxBytes) {
+      return request.resource.size < maxBytes;
+    }
+
+    // Validate image MIME type
+    function isValidImage() {
+      return request.resource.contentType.matches('image/(jpeg|jpg|png|webp|gif)');
+    }
+
+    // Validate PDF MIME type
+    function isValidPdf() {
+      return request.resource.contentType == 'application/pdf';
+    }
+
+    // ============================================
+    // USER AVATARS (logo EO / Company)
+    // Path: /users/{firebaseUid}/avatar.{ext}
+    // ============================================
+
+    match /users/{userId}/{fileName} {
+      // Siapa saja yang sudah login bisa baca avatar (untuk display)
+      allow read: if isAuthenticated();
+
+      // Hanya owner yang bisa upload/update avatar mereka sendiri
+      // Maksimal 2MB, harus image
+      allow write: if isOwner(userId)
+                   && isValidImage()
+                   && isUnderSize(2 * 1024 * 1024);
+
+      // Hanya owner yang bisa delete
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================
+    // EVENT FILES (banner & proposal)
+    // Path: /events/{eventId}/banner.{ext}
+    //       /events/{eventId}/proposal.pdf
+    // ============================================
+
+    match /events/{eventId}/banner.{ext} {
+      // Publik bisa baca (untuk display di katalog publik)
+      allow read: if true;
+
+      // Authenticated user bisa upload (backend validate ownership)
+      // Max 5MB, harus image
+      allow write: if isAuthenticated()
+                   && isValidImage()
+                   && isUnderSize(5 * 1024 * 1024);
+
+      // Hanya backend yang bisa delete via Admin SDK (bypass rules)
+      // Tidak ada allow delete untuk client
+    }
+
+    match /events/{eventId}/proposal.pdf {
+      // Publik bisa baca proposal di event yang sudah published
+      // (akses ke published event diatur via backend, file URL hanya
+      // diberikan dalam response setelah event published)
+      allow read: if true;
+
+      // Authenticated user bisa upload (backend validate ownership)
+      // Max 10MB, harus PDF
+      allow write: if isAuthenticated()
+                   && isValidPdf()
+                   && isUnderSize(10 * 1024 * 1024);
+
+      // Delete via Admin SDK only
+    }
+
+    // ============================================
+    // FALLBACK: Deny semua path lain
+    // ============================================
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

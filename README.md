@@ -10,7 +10,7 @@ Frontend repository: <link-repo-frontend-mu>
 - Node.js 22 + TypeScript 5
 - Express 5
 - PostgreSQL (Neon) + Prisma 7 + pgvector
-- Firebase Auth, Gemini AI 2.5, Google Cloud Storage
+- Firebase Auth, Gemini AI 2.5, Firebase Storage
 - Midtrans, Resend, Upstash Redis
 
 ## Setup

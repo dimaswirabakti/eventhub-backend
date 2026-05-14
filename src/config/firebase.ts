@@ -6,11 +6,13 @@ if (!admin.apps.length) {
     credential: admin.credential.cert({
       projectId: env.FIREBASE_PROJECT_ID,
       clientEmail: env.FIREBASE_CLIENT_EMAIL,
-      // Replace escaped newlines
       privateKey: env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     }),
+    storageBucket: env.FIREBASE_STORAGE_BUCKET,
   });
 }
 
 export const firebaseAuth = admin.auth();
+export const firebaseStorage = admin.storage();
+export const firebaseBucket = admin.storage().bucket();
 export default admin;

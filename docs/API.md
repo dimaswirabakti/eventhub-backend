@@ -22,7 +22,7 @@ Frontend                    Firebase                Backend
    │◀── idToken ───────────────│                      │
    │                                                  │
    │── Authorization: Bearer <idToken> ──────────────▶│
-   │                                                  │ ─── verifyIdToken
+   │                                verifyIdToken ─── │
    │                                                  │
    │◀── data ─────────────────────────────────────────│
 ```
