@@ -279,6 +279,9 @@ export const generateEmbedding = async (text: string): Promise<number[]> => {
     const response = await genAI.models.embedContent({
       model: GEMINI_MODELS.embedding,
       contents: text,
+      config: {
+        outputDimensionality: 768,
+      },
     });
 
     const embedding = response.embeddings?.[0]?.values;

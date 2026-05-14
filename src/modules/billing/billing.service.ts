@@ -21,7 +21,7 @@ export const deductToken = async (
   tx?: Prisma.TransactionClient
 ) => {
   const cost = TOKEN_COSTS[feature];
-  const client = tx ?? prisma;
+  // const client = tx ?? prisma;
 
   // Function untuk dijalankan, baik dalam atau luar transaction
   const operation = async (client: Prisma.TransactionClient) => {

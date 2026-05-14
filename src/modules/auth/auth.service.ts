@@ -3,6 +3,7 @@ import { firebaseAuth } from '@/config/firebase.js';
 import { AppError, NotFoundError, UnauthorizedError } from '@/common/errors/app-error.js';
 import { StatusCodes } from 'http-status-codes';
 import type { RegisterInput } from './auth.schema.js';
+import { embedCompanyProfile } from '@/modules/matchmaking/matchmaking.service.js';
 
 const FREE_TOKEN_QUOTA = 10; // token gratis saat signup
 
@@ -15,14 +16,12 @@ export const verifyFirebaseToken = async (idToken: string) => {
 };
 
 export const registerUser = async (firebaseUid: string, email: string, input: RegisterInput) => {
-  // Cek apakah user sudah ada
   const existing = await prisma.user.findUnique({ where: { firebaseUid } });
   if (existing) {
     throw new AppError('User already registered', StatusCodes.CONFLICT);
   }
 
-  // Transaction: buat User + Profile
-  const user = await prisma.$transaction(async (tx) => {
+  const { user, companyProfileId } = await prisma.$transaction(async (tx) => {
     const newUser = await tx.user.create({
       data: {
         firebaseUid,
@@ -32,6 +31,8 @@ export const registerUser = async (firebaseUid: string, email: string, input: Re
         tokenBalance: FREE_TOKEN_QUOTA,
       },
     });
+
+    let companyId: string | null = null;
 
     if (input.role === 'EO') {
       const { campus, description, ...required } = input.profile;
@@ -45,7 +46,7 @@ export const registerUser = async (firebaseUid: string, email: string, input: Re
       });
     } else {
       const { website, targetAudience, ...required } = input.profile;
-      await tx.companyProfile.create({
+      const created = await tx.companyProfile.create({
         data: {
           userId: newUser.id,
           ...required,
@@ -53,10 +54,16 @@ export const registerUser = async (firebaseUid: string, email: string, input: Re
           ...(targetAudience !== undefined && { targetAudience }),
         },
       });
+      companyId = created.id;
     }
 
-    return newUser;
+    return { user: newUser, companyProfileId: companyId };
   });
+
+  // Fire-and-forget: generate embedding untuk Company
+  if (companyProfileId) {
+    void embedCompanyProfile(companyProfileId);
+  }
 
   return getUserWithProfile(user.id);
 };

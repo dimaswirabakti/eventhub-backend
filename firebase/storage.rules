@@ -6,83 +6,72 @@ service firebase.storage {
     // HELPER FUNCTIONS
     // ============================================
 
-    // User sudah login
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    // User adalah owner berdasarkan userId di path
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // File size limit (dalam bytes)
     function isUnderSize(maxBytes) {
       return request.resource.size < maxBytes;
     }
 
-    // Validate image MIME type
     function isValidImage() {
       return request.resource.contentType.matches('image/(jpeg|jpg|png|webp|gif)');
     }
 
-    // Validate PDF MIME type
     function isValidPdf() {
       return request.resource.contentType == 'application/pdf';
     }
 
     // ============================================
     // USER AVATARS (logo EO / Company)
-    // Path: /users/{firebaseUid}/avatar.{ext}
+    // Path: /users/{firebaseUid}/{fileName}
     // ============================================
 
     match /users/{userId}/{fileName} {
-      // Siapa saja yang sudah login bisa baca avatar (untuk display)
+      // Siapa saja yang sudah login bisa baca avatar
       allow read: if isAuthenticated();
 
-      // Hanya owner yang bisa upload/update avatar mereka sendiri
-      // Maksimal 2MB, harus image
+      // Hanya owner yang bisa upload/update. Max 2MB, harus image.
       allow write: if isOwner(userId)
                    && isValidImage()
                    && isUnderSize(2 * 1024 * 1024);
 
-      // Hanya owner yang bisa delete
       allow delete: if isOwner(userId);
     }
 
     // ============================================
     // EVENT FILES (banner & proposal)
-    // Path: /events/{eventId}/banner.{ext}
-    //       /events/{eventId}/proposal.pdf
+    // Path: /events/{eventId}/{fileName}
+    //
+    // Banner: fileName mulai dengan "banner." → harus image, max 5MB
+    // Proposal: fileName == "proposal.pdf" → harus PDF, max 10MB
+    //
+    // Ownership Event tidak bisa dicek di Storage Rules
+    // (tidak ada akses ke PostgreSQL aplikasi ini).
+    // Backend SECARA TAMBAHAN validate ownership saat URL dikirim.
     // ============================================
 
-    match /events/{eventId}/banner.{ext} {
-      // Publik bisa baca (untuk display di katalog publik)
+    match /events/{eventId}/{fileName} {
+      // Publik bisa baca (untuk display katalog event yang sudah published)
       allow read: if true;
 
-      // Authenticated user bisa upload (backend validate ownership)
-      // Max 5MB, harus image
+      // Banner: harus image, max 5MB
       allow write: if isAuthenticated()
+                   && fileName.matches('banner\\..*')
                    && isValidImage()
                    && isUnderSize(5 * 1024 * 1024);
 
-      // Hanya backend yang bisa delete via Admin SDK (bypass rules)
-      // Tidak ada allow delete untuk client
-    }
-
-    match /events/{eventId}/proposal.pdf {
-      // Publik bisa baca proposal di event yang sudah published
-      // (akses ke published event diatur via backend, file URL hanya
-      // diberikan dalam response setelah event published)
-      allow read: if true;
-
-      // Authenticated user bisa upload (backend validate ownership)
-      // Max 10MB, harus PDF
+      // Proposal: harus PDF persis bernama "proposal.pdf", max 10MB
       allow write: if isAuthenticated()
+                   && fileName == 'proposal.pdf'
                    && isValidPdf()
                    && isUnderSize(10 * 1024 * 1024);
 
-      // Delete via Admin SDK only
+      // Delete via backend Admin SDK only (bypass rules otomatis)
     }
 
     // ============================================

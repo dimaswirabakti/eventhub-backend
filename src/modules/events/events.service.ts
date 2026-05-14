@@ -16,6 +16,7 @@ import type {
   UpdateTierInput,
 } from './events.schema.js';
 import type { Prisma } from '@prisma/client';
+import { embedEvent } from '@/modules/matchmaking/matchmaking.service.js';
 
 // Helper: bersihkan optional field undefined sebelum kirim ke Prisma
 const stripUndefined = <T extends Record<string, unknown>>(
@@ -122,7 +123,6 @@ export const getMyEvent = async (userId: string, eventId: string) => {
 export const updateEvent = async (userId: string, eventId: string, input: UpdateEventInput) => {
   const existing = await assertEventOwnership(eventId, userId);
 
-  // Validasi: kalau update startDate atau endDate, cek konsistensi
   const newStart = input.startDate ?? existing.startDate;
   const newEnd = input.endDate ?? existing.endDate;
   if (newEnd < newStart) {
@@ -135,16 +135,36 @@ export const updateEvent = async (userId: string, eventId: string, input: Update
     throw new ValidationError('audienceAgeMax must be >= audienceAgeMin');
   }
 
-  // Kalau title berubah, regenerate slug
   const updateData = stripUndefined(input);
   if (input.title && input.title !== existing.title) {
     (updateData as Prisma.EventUpdateInput).slug = generateUniqueSlug(input.title);
   }
 
-  return prisma.event.update({
+  const updated = await prisma.event.update({
     where: { id: eventId },
     data: updateData,
   });
+
+  // Re-embed kalau event sudah published & field embed-relevant berubah
+  const embedRelevantFields: Array<keyof UpdateEventInput> = [
+    'title',
+    'description',
+    'category',
+    'theme',
+    'audienceInterests',
+    'audienceAgeMin',
+    'audienceAgeMax',
+    'expectedAttendees',
+    'city',
+    'isOnline',
+  ];
+  const hasRelevantChange = embedRelevantFields.some((field) => input[field] !== undefined);
+
+  if (existing.status === 'PUBLISHED' && hasRelevantChange) {
+    void embedEvent(eventId);
+  }
+
+  return updated;
 };
 
 // DELETE EVENT
@@ -177,7 +197,7 @@ export const publishEvent = async (userId: string, eventId: string) => {
     throw new AppError('Cannot publish a cancelled event', StatusCodes.CONFLICT);
   }
 
-  // Pre-flight check: event harus punya minimal 1 tier dan proposal
+  // Pre-flight check
   const tierCount = await prisma.sponsorshipTier.count({ where: { eventId } });
   if (tierCount === 0) {
     throw new ValidationError('Event must have at least 1 sponsorship tier before publishing');
@@ -188,7 +208,7 @@ export const publishEvent = async (userId: string, eventId: string) => {
     throw new ValidationError('Event must have a proposal before publishing');
   }
 
-  return prisma.event.update({
+  const publishedEvent = await prisma.event.update({
     where: { id: eventId },
     data: {
       status: 'PUBLISHED',
@@ -196,7 +216,11 @@ export const publishEvent = async (userId: string, eventId: string) => {
     },
   });
 
-  // NOTE: Setelah modul AI siap, di sini akan trigger embedding generation
+  // Fire-and-forget: generate embedding di background
+  // Tidak di-await supaya response cepat (embedding butuh ~1-2 detik)
+  void embedEvent(eventId);
+
+  return publishedEvent;
 };
 
 // CLOSE EVENT

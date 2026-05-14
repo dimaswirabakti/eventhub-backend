@@ -43,6 +43,7 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 ## Response Format
 
 ### Success
+
 ```json
 {
   "success": true,
@@ -51,6 +52,7 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 ```
 
 ### Error
+
 ```json
 {
   "success": false,
@@ -61,17 +63,17 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 ### Common Status Codes
 
-| Status | Meaning |
-|--------|---------|
-| 200 | OK |
-| 201 | Created |
-| 400 | Validation error / bad request |
-| 401 | Missing / invalid token |
-| 402 | Insufficient tokens (untuk fitur AI) |
-| 403 | Forbidden (role mismatch / not owner) |
-| 404 | Resource not found |
-| 409 | Conflict (e.g., duplicate, can't delete) |
-| 500 | Server error |
+| Status | Meaning                                  |
+| ------ | ---------------------------------------- |
+| 200    | OK                                       |
+| 201    | Created                                  |
+| 400    | Validation error / bad request           |
+| 401    | Missing / invalid token                  |
+| 402    | Insufficient tokens (untuk fitur AI)     |
+| 403    | Forbidden (role mismatch / not owner)    |
+| 404    | Resource not found                       |
+| 409    | Conflict (e.g., duplicate, can't delete) |
+| 500    | Server error                             |
 
 ---
 
@@ -79,37 +81,38 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 ### 🔐 Auth
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/auth/register` | Firebase Token | Daftar user baru (EO atau Company) |
-| POST | `/auth/login` | Required | Sync user dari Firebase ke DB |
-| GET | `/auth/me` | Required | Get user info + profile |
-| DELETE | `/auth/me` | Required | Soft delete akun |
+| Method | Endpoint         | Auth           | Description                        |
+| ------ | ---------------- | -------------- | ---------------------------------- |
+| POST   | `/auth/register` | Firebase Token | Daftar user baru (EO atau Company) |
+| POST   | `/auth/login`    | Required       | Sync user dari Firebase ke DB      |
+| GET    | `/auth/me`       | Required       | Get user info + profile            |
+| DELETE | `/auth/me`       | Required       | Soft delete akun                   |
 
 ### 🎪 Events (EO Only)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/events` | Create event (draft) |
-| GET | `/events/my` | List event milik EO |
-| GET | `/events/:id` | Get event by ID (owner only) |
-| PATCH | `/events/:id` | Update event |
-| DELETE | `/events/:id` | Delete event |
-| POST | `/events/:id/publish` | Publish event ke katalog |
-| POST | `/events/:id/close` | Tutup event |
-| POST | `/events/:id/tiers` | Tambah sponsorship tier |
-| PATCH | `/events/:id/tiers/:tierId` | Update tier |
-| DELETE | `/events/:id/tiers/:tierId` | Delete tier |
-| POST | `/events/:id/proposal` | Set/upload proposal |
+| Method | Endpoint                    | Description                  |
+| ------ | --------------------------- | ---------------------------- |
+| POST   | `/events`                   | Create event (draft)         |
+| GET    | `/events/my`                | List event milik EO          |
+| GET    | `/events/:id`               | Get event by ID (owner only) |
+| PATCH  | `/events/:id`               | Update event                 |
+| DELETE | `/events/:id`               | Delete event                 |
+| POST   | `/events/:id/publish`       | Publish event ke katalog     |
+| POST   | `/events/:id/close`         | Tutup event                  |
+| POST   | `/events/:id/tiers`         | Tambah sponsorship tier      |
+| PATCH  | `/events/:id/tiers/:tierId` | Update tier                  |
+| DELETE | `/events/:id/tiers/:tierId` | Delete tier                  |
+| POST   | `/events/:id/proposal`      | Set/upload proposal          |
 
 ### 🌐 Public Catalog (No Auth)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/catalog/events` | List published events (filter + pagination) |
-| GET | `/catalog/events/:slug` | Get event detail by slug |
+| Method | Endpoint                | Description                                 |
+| ------ | ----------------------- | ------------------------------------------- |
+| GET    | `/catalog/events`       | List published events (filter + pagination) |
+| GET    | `/catalog/events/:slug` | Get event detail by slug                    |
 
 **Query params untuk catalog:**
+
 - `category` — TECHNOLOGY, BUSINESS, ARTS, dll
 - `city` — string
 - `isOnline` — boolean
@@ -120,20 +123,61 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 ### 🤖 AI (EO Only, Butuh Token)
 
-| Method | Endpoint | Cost | Description |
-|--------|----------|------|-------------|
-| POST | `/ai/proposal-builder` | 5 token | Generate proposal lengkap dari data event |
-| POST | `/ai/smart-review` | 3 token | Analyze proposal: score + issues + suggestions |
+| Method | Endpoint               | Cost    | Description                                    |
+| ------ | ---------------------- | ------- | ---------------------------------------------- |
+| POST   | `/ai/proposal-builder` | 5 token | Generate proposal lengkap dari data event      |
+| POST   | `/ai/smart-review`     | 3 token | Analyze proposal: score + issues + suggestions |
+
+### 🎯 Recommendations (Matchmaking)
+
+| Method | Endpoint                             | Untuk   | Description                                  |
+| ------ | ------------------------------------ | ------- | -------------------------------------------- |
+| GET    | `/recommendations/events`            | Company | FYP-style: event yang cocok untuk brand kamu |
+| GET    | `/recommendations/sponsors/:eventId` | EO      | Company yang cocok jadi sponsor event        |
+
+**Query params (optional):**
+
+- `limit` — default 20, max 50
+- `threshold` — default 0.6 (similarity minimum, 0-1)
+
+**Response shape:**
+
+```json
+{
+  "success": true,
+  "recommendations": [
+    {
+      "id": "evt_xxx",
+      "title": "...",
+      "similarity": 0.78,
+      "finalScore": 0.846,
+      "scoreBreakdown": {
+        "semantic": 0.78,
+        "category": 1,
+        "city": 0,
+        "audience": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "total": 5,
+    "threshold": 0.6,
+    "semanticWeight": 0.7
+  }
+}
+```
 
 ---
 
 ## User Roles & Workflow
 
 ### User Roles
+
 - `EO` — Panitia/organizer event (mahasiswa, BEM, HIMA, UKM, komunitas)
 - `COMPANY` — Brand/sponsor
 
 ### EO Workflow
+
 ```
 1. Register sebagai EO (POST /auth/register, role: EO)
 2. Create event (POST /events) — status: DRAFT
@@ -147,6 +191,7 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 ```
 
 ### Company Workflow
+
 ```
 1. Register sebagai Company (POST /auth/register, role: COMPANY)
 2. Browse public catalog (GET /catalog/events) — no auth needed
@@ -161,6 +206,7 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 Saat signup, user dapat **10 token gratis**.
 
 **Cost per fitur:**
+
 - Proposal Builder: 5 token
 - Smart Review: 3 token
 - Unlock Contact: 2 token (Fitur menyusul)
@@ -262,6 +308,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
