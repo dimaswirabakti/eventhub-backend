@@ -32,6 +32,7 @@ export interface CompanySearchResult {
   logoUrl: string | null;
   city: string;
   targetAudience: string | null;
+  preferences: unknown;
   similarity: number;
 }
 
@@ -115,6 +116,7 @@ export const searchSimilarCompanies = async (
       cp."logoUrl",
       cp.city,
       cp."targetAudience",
+      cp.preferences,
       1 - (cp.embedding <=> $1::vector) AS similarity
     FROM company_profiles cp
     INNER JOIN users u ON u.id = cp."userId"

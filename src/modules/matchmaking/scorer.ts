@@ -1,5 +1,6 @@
 import type { EventSearchResult, CompanySearchResult } from './search.repository.js';
 import type { Event, CompanyProfile } from '@prisma/client';
+import { parsePreferences, type CompanyPreferences } from './preferences.types.js';
 
 // CONFIG
 const WEIGHTS = {
@@ -25,9 +26,16 @@ const cityMatch = (cityA: string, cityB: string): number => {
   return cityA.toLowerCase() === cityB.toLowerCase() ? 1 : 0;
 };
 
-const categoryAlignment = (eventCategory: string, companyIndustry: string): number => {
-  // Mapping kategori event yang relevant ke industri company
-  // Ini prosedur sederhana, bisa ditambahkan nanti
+const categoryAlignment = (
+  eventCategory: string,
+  companyIndustry: string,
+  preferences: CompanyPreferences | null
+): number => {
+  // Cek eksplisit preferredCategories kalau ada
+  if (preferences && preferences.preferredCategories.length > 0) {
+    return preferences.preferredCategories.includes(eventCategory as never) ? 1 : 0;
+  }
+
   const mapping: Record<string, string[]> = {
     TECHNOLOGY: ['technology', 'software', 'tech', 'it', 'digital', 'startup', 'fintech'],
     BUSINESS: ['finance', 'banking', 'consulting', 'business', 'investment'],
@@ -43,7 +51,7 @@ const categoryAlignment = (eventCategory: string, companyIndustry: string): numb
   };
 
   const keywords = mapping[eventCategory.toUpperCase()] ?? [];
-  if (keywords.length === 0) return 0.3; // neutral score
+  if (keywords.length === 0) return 0.3;
 
   const industry = companyIndustry.toLowerCase();
   const matched = keywords.some((kw) => industry.includes(kw));
@@ -51,13 +59,55 @@ const categoryAlignment = (eventCategory: string, companyIndustry: string): numb
 };
 
 const audienceFitness = (
-  eventInterests: string[],
-  companyTargetAudience: string | null
+  event: Pick<Event, 'audienceInterests' | 'audienceAgeMin' | 'audienceAgeMax'>,
+  company: Pick<CompanyProfile, 'targetAudience'>,
+  preferences: CompanyPreferences | null
 ): number => {
-  if (!companyTargetAudience) return 0.3; // neutral
-  const audienceText = companyTargetAudience.toLowerCase();
-  const matched = eventInterests.filter((i) => audienceText.includes(i.toLowerCase())).length;
-  return matched > 0 ? Math.min(matched / eventInterests.length, 1) : 0.2;
+  let score = 0;
+  let weightSum = 0;
+
+  // Interests overlap (kalau ada di preferences)
+  if (preferences && preferences.preferredInterests.length > 0) {
+    const eventInterests = event.audienceInterests.map((i) => i.toLowerCase());
+    const prefInterests = preferences.preferredInterests.map((i) => i.toLowerCase());
+    const overlap = prefInterests.filter((i) =>
+      eventInterests.some((ei) => ei.includes(i) || i.includes(ei))
+    ).length;
+    const interestScore = overlap / Math.max(prefInterests.length, 1);
+    score += interestScore * 0.6;
+    weightSum += 0.6;
+  } else if (company.targetAudience) {
+    // Fallback ke targetAudience text matching
+    const audienceText = company.targetAudience.toLowerCase();
+    const matched = event.audienceInterests.filter((i) =>
+      audienceText.includes(i.toLowerCase())
+    ).length;
+    const fallbackScore = matched > 0 ? Math.min(matched / event.audienceInterests.length, 1) : 0.2;
+    score += fallbackScore * 0.6;
+    weightSum += 0.6;
+  }
+
+  // Age range overlap (kalau ada di preferences)
+  if (
+    preferences &&
+    preferences.preferredAudienceAgeMin !== undefined &&
+    preferences.preferredAudienceAgeMax !== undefined
+  ) {
+    const overlap = Math.max(
+      0,
+      Math.min(event.audienceAgeMax, preferences.preferredAudienceAgeMax) -
+        Math.max(event.audienceAgeMin, preferences.preferredAudienceAgeMin)
+    );
+    const eventRange = event.audienceAgeMax - event.audienceAgeMin;
+    const ageScore = eventRange > 0 ? overlap / eventRange : 0;
+    score += ageScore * 0.4;
+    weightSum += 0.4;
+  }
+
+  // Kalau tidak ada signal sama sekali, return neutral
+  if (weightSum === 0) return 0.3;
+
+  return score / weightSum;
 };
 
 // SCORING: Event for Company (FYP - "For You Page")
@@ -74,12 +124,22 @@ export interface ScoredEvent extends EventSearchResult {
 // Hitung final score untuk Event dari sudut pandang Company.
 export const scoreEventForCompany = (
   event: EventSearchResult,
-  company: Pick<CompanyProfile, 'industry' | 'city' | 'targetAudience'>
+  company: Pick<CompanyProfile, 'industry' | 'city' | 'targetAudience' | 'preferences'>
 ): ScoredEvent => {
+  const preferences = parsePreferences(company.preferences);
+
   const semantic = event.similarity;
-  const category = categoryAlignment(event.category, company.industry);
+  const category = categoryAlignment(event.category, company.industry, preferences);
   const city = cityMatch(event.city, company.city);
-  const audience = audienceFitness(event.audienceInterests, company.targetAudience);
+  const audience = audienceFitness(
+    {
+      audienceInterests: event.audienceInterests,
+      audienceAgeMin: event.audienceAgeMin,
+      audienceAgeMax: event.audienceAgeMax,
+    },
+    { targetAudience: company.targetAudience },
+    preferences
+  );
 
   const finalScore =
     semantic * WEIGHTS.semantic +
@@ -89,7 +149,7 @@ export const scoreEventForCompany = (
 
   return {
     ...event,
-    finalScore: Math.round(finalScore * 1000) / 1000, // 3 decimal
+    finalScore: Math.round(finalScore * 1000) / 1000,
     scoreBreakdown: {
       semantic: Math.round(semantic * 1000) / 1000,
       category,
@@ -111,13 +171,26 @@ export interface ScoredCompany extends CompanySearchResult {
 }
 
 export const scoreCompanyForEvent = (
-  company: CompanySearchResult,
-  event: Pick<Event, 'category' | 'city' | 'audienceInterests'>
+  company: CompanySearchResult & { preferences?: unknown },
+  event: Pick<
+    Event,
+    'category' | 'city' | 'audienceInterests' | 'audienceAgeMin' | 'audienceAgeMax'
+  >
 ): ScoredCompany => {
+  const preferences = parsePreferences(company.preferences);
+
   const semantic = company.similarity;
-  const category = categoryAlignment(event.category, company.industry);
+  const category = categoryAlignment(event.category, company.industry, preferences);
   const city = cityMatch(event.city, company.city);
-  const audience = audienceFitness(event.audienceInterests, company.targetAudience);
+  const audience = audienceFitness(
+    {
+      audienceInterests: event.audienceInterests,
+      audienceAgeMin: event.audienceAgeMin,
+      audienceAgeMax: event.audienceAgeMax,
+    },
+    { targetAudience: company.targetAudience },
+    preferences
+  );
 
   const finalScore =
     semantic * WEIGHTS.semantic +

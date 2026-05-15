@@ -88,6 +88,16 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 | GET    | `/auth/me`       | Required       | Get user info + profile            |
 | DELETE | `/auth/me`       | Required       | Soft delete akun                   |
 
+### 👤 Profile
+
+| Method | Endpoint                       | Auth    | Description                          |
+| ------ | ------------------------------ | ------- | ------------------------------------ |
+| PATCH  | `/profile/eo`                  | EO      | Update EO profile (partial)          |
+| PATCH  | `/profile/company`             | Company | Update Company profile + preferences |
+| GET    | `/profile/company/preferences` | Company | Get current preferences              |
+
+**Note:** Update Company profile (yang mencakup preferences) akan auto-trigger re-generate embedding di background untuk improve matchmaking accuracy.
+
 ### 🎪 Events (EO Only)
 
 | Method | Endpoint                    | Description                  |
@@ -166,6 +176,22 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
   }
 }
 ```
+
+### 💾 Saved Events (Wishlist)
+
+Company only. Idempotent operations.
+
+| Method | Endpoint                 | Description                                                 |
+| ------ | ------------------------ | ----------------------------------------------------------- |
+| GET    | `/saved-events`          | List saved events (with pagination)                         |
+| POST   | `/saved-events/:eventId` | Save event (idempotent, call multiple times = same result) |
+| DELETE | `/saved-events/:eventId` | Unsave event (idempotent)                                   |
+
+**Response includes `isActive` flag:**
+
+- `true` — event masih PUBLISHED dan belum expired (bisa di-offer)
+- `false` — event sudah closed/cancelled/expired (frontend tampilkan badge sesuai)
+
 
 ---
 

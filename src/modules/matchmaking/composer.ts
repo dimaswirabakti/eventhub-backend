@@ -1,4 +1,5 @@
 import type { Event, CompanyProfile } from '@prisma/client';
+import { parsePreferences } from './preferences.types.js';
 
 // Compose text representation dari Event untuk di-embed.
 export const composeEventText = (event: Event): string => {
@@ -18,13 +19,34 @@ export const composeEventText = (event: Event): string => {
 
 // Compose text representation dari CompanyProfile untuk di-embed.
 export const composeCompanyText = (company: CompanyProfile): string => {
-  const parts = [
+  const parts: string[] = [
     `Perusahaan: ${company.companyName}`,
     `Industri: ${company.industry}`,
     `Deskripsi: ${company.description}`,
     company.targetAudience ? `Target audiens: ${company.targetAudience}` : '',
     `Lokasi: ${company.city}`,
-  ].filter(Boolean);
+  ];
 
-  return parts.join('. ');
+  // Tambahkan preferences kalau ada
+  const prefs = parsePreferences(company.preferences);
+  if (prefs) {
+    if (prefs.preferredCategories.length > 0) {
+      parts.push(`Mencari event di kategori: ${prefs.preferredCategories.join(', ')}`);
+    }
+
+    if (
+      prefs.preferredAudienceAgeMin !== undefined &&
+      prefs.preferredAudienceAgeMax !== undefined
+    ) {
+      parts.push(
+        `Target audiens yang dicari: usia ${prefs.preferredAudienceAgeMin}-${prefs.preferredAudienceAgeMax} tahun`
+      );
+    }
+
+    if (prefs.preferredInterests.length > 0) {
+      parts.push(`Minat audiens yang dicari: ${prefs.preferredInterests.join(', ')}`);
+    }
+  }
+
+  return parts.filter(Boolean).join('. ');
 };

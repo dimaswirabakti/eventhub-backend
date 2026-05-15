@@ -89,6 +89,7 @@ model CompanyProfile {
   phoneNumber   String
   city          String
   targetAudience String?                // ringkasan target audiens (untuk embedding)
+  preferences   Json?
   embedding     Unsupported("vector(768)")?
   isVerified    Boolean                 @default(false)
   createdAt     DateTime                @default(now())
@@ -96,6 +97,7 @@ model CompanyProfile {
 
   user   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   offers SponsorshipOffer[]
+  savedEvents SavedEvent[]
 
   @@index([industry])
   @@map("company_profiles")
@@ -141,6 +143,7 @@ model Event {
   proposal  Proposal?
   tiers     SponsorshipTier[]
   offers    SponsorshipOffer[]
+  savedBy   SavedEvent[]
 
   @@index([status])
   @@index([category])
@@ -226,6 +229,7 @@ model SponsorshipOffer {
   companyProfileId String
   tierId           String
   status           OfferStatus   @default(PENDING)
+  initiatedBy      OfferInitiator @default(COMPANY)
   message          String?       // pesan awal dari company saat make offer
 
   createdAt        DateTime      @default(now())
@@ -242,6 +246,7 @@ model SponsorshipOffer {
   @@index([status])
   @@index([eventId])
   @@index([companyProfileId])
+  @@index([initiatedBy])
   @@map("sponsorship_offers")
 }
 
@@ -252,6 +257,11 @@ enum OfferStatus {
   ACCEPTED      // deal closed
   REJECTED      // EO tolak
   CANCELLED     // Company tarik offer
+}
+
+enum OfferInitiator {
+  COMPANY  // Company make offer ke Event
+  EO       // EO pitch event ke Company
 }
 
 // ============================================
@@ -329,4 +339,21 @@ enum TokenFeature {
   PROPOSAL_BUILDER  // generate proposal via AI
   SMART_REVIEW      // AI cek skor proposal
   UNLOCK_CONTACT    // unlock contact info company
+}
+
+// ============================================
+// SAVED EVENT (Company saves event)
+// ============================================
+
+model SavedEvent {
+  companyProfileId String
+  eventId          String
+  createdAt        DateTime @default(now())
+
+  companyProfile CompanyProfile @relation(fields: [companyProfileId], references: [id], onDelete: Cascade)
+  event          Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([companyProfileId, eventId])
+  @@index([companyProfileId, createdAt])
+  @@map("saved_events")
 }
