@@ -2,7 +2,7 @@
 
 B2B Sponsorship Marketplace API.
 
-📖 **[Lihat API Documentation](./docs/API.md)** untuk dokumentasi lengkap endpoint, dan import [Postman Collection](./docs/eventhub-backend.postman_collection.json) untuk testing.
+📖 **[Lihat API Documentation](./docs/API.md)** untuk dokumentasi lengkap endpoint, dan import [Postman Collection](./docs/EevntHub-backend.postman_collection.json) untuk testing.
 
 Frontend repository: <link-repo-frontend-mu>
 
