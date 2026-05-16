@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { prisma } from '@/config/database.js';
 import { AppError, ForbiddenError, NotFoundError } from '@/common/errors/app-error.js';
 import { StatusCodes } from 'http-status-codes';

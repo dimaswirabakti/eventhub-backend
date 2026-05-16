@@ -1,0 +1,1136 @@
+{
+  "info": {
+    "_postman_id": "ca2993be-ba74-4c41-a6f6-bbd3a5cdffb2",
+    "name": "EevntHub-backend",
+    "description": "Contoh Salah Satu Workflow Testing:  \n  \nStep 1: Run \"🔐 Generate Firebase Token\" → token auto-save  \nStep 2: Run \"POST Create Event\" → event_id auto-save  \nStep 3: Run \"POST Create Tier\" → pakai {{event_id}}  \nStep 4: Run \"POST Set Proposal\" → pakai {{event_id}}  \nStep 5: Run \"POST Publish Event\" → pakai {{event_id}}  \nStep 6: Run \"GET Catalog\" → public, no auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "37124877"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Company Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"COMPANY\",\n    \"name\": \"Budi Santoso\",\n    \"profile\": {\n        \"companyName\": \"PT Codify Indonesia\",\n        \"industry\": \"Software Development\",\n        \"description\": \"Konsultan pengembangan aplikasi enterprise. Membantu perusahaan adopsi machine learning dan kecerdasan buatan untuk meningkatkan produktivitas.\",\n        \"website\": \"https://codify.id\",\n        \"phoneNumber\": \"021-555-1234\",\n        \"city\": \"Jakarta\",\n        \"targetAudience\": \"Developer profesional dan calon developer muda yang tertarik dengan AI dan teknologi modern\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "EO Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"EO\",\n    \"name\": \"Aditya Pranawa\",\n    \"profile\": {\n        \"organizationName\": \"Garuda Ventures Network\",\n        \"organizationType\": \"COMMUNITY\",\n        \"campus\": \"BINUS University\",\n        \"phoneNumber\": \"081298765432\",\n        \"city\": \"Jakarta\",\n        \"description\": \"Komunitas venture capital dan startup yang berfokus pada pengembangan ekosistem investasi digital di Indonesia.\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.success && response.data?.id) {",
+                  "    pm.environment.set(\"user_id\", response.data.id);",
+                  "    pm.environment.set(\"user_role\", response.data.role);",
+                  "    console.log(\"✅ Login success:\", response.data.email, \"as\", response.data.role);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Update EO Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Dims Wira Bakti\",\n    \"description\": \"Badan Eksekutif Mahasiswa FT UGM, aktif mengadakan event teknologi dan kewirausahaan untuk mahasiswa.\",\n    \"phoneNumber\": \"081234567890\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/profile/eo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile",
+                "eo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Company Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"description\": \"Catalyst Ventures adalah VC firm yang fokus pada early-stage startup di sektor teknologi. Kami berinvestasi pada AI, fintech, dan SaaS dengan mission mendukung ekosistem startup Indonesia.\",\n    \"targetAudience\": \"Founder startup tech, developer profesional, dan engineer muda yang tertarik dengan AI dan kewirausahaan.\",\n    \"preferences\": {\n        \"preferredCategories\": [\n            \"TECHNOLOGY\",\n            \"BUSINESS\",\n            \"COMPETITION\"\n        ],\n        \"preferredAudienceAgeMin\": 20,\n        \"preferredAudienceAgeMax\": 35,\n        \"preferredInterests\": [\n            \"AI\",\n            \"startup\",\n            \"fintech\",\n            \"machine learning\",\n            \"entrepreneurship\"\n        ]\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/profile/company",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile",
+                "company"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Company Preferences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile/company/preferences",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile",
+                "company",
+                "preferences"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Events (EO)",
+      "item": [
+        {
+          "name": "Create Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.success && response.data?.id) {",
+                  "  pm.environment.set(\"event_id\", response.data.id);",
+                  "  console.log(\"✅ Event ID saved:\", response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"TechFest UGM 2026\",\n    \"description\": \"Festival teknologi tahunan terbesar di UGM dengan peserta dari berbagai universitas se-Indonesia. Menampilkan keynote speaker, workshop coding, hackathon, dan startup showcase.\",\n    \"category\": \"TECHNOLOGY\",\n    \"theme\": \"AI & Future of Work\",\n    \"startDate\": \"2026-08-15\",\n    \"endDate\": \"2026-08-17\",\n    \"city\": \"Yogyakarta\",\n    \"venue\": \"Grha Sabha Pramana UGM\",\n    \"isOnline\": false,\n    \"expectedAttendees\": 2000,\n    \"audienceAgeMin\": 18,\n    \"audienceAgeMax\": 25,\n    \"audienceInterests\": [\n        \"technology\",\n        \"startup\",\n        \"AI\",\n        \"programming\"\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Tier",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Gold Sponsor\",\n    \"price\": 15000000,\n    \"benefits\": [\n        \"Logo besar di banner utama\",\n        \"Booth eksklusif 3x3m\",\n        \"5 menit slot speaker session\",\n        \"Social media mention\"\n    ],\n    \"maxSlots\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/tiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "tiers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Proposal",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"source\": \"UPLOAD\",\n    \"fileUrl\": \"https://example.com/proposal-techfest-2026.pdf\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/proposal",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "proposal"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Event",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/publish",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "publish"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/my",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catalog (Public)",
+      "item": [
+        {
+          "name": "Catalog",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/events?category=TECHNOLOGY&city=yogyakarta",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "TECHNOLOGY"
+                },
+                {
+                  "key": "city",
+                  "value": "yogyakarta"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Event by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/events/techfest-ugm-2026-o8su3i",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "events",
+                "techfest-ugm-2026-o8su3i"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "item": [
+        {
+          "name": "Proposal Builder",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"tone\": \"PERSUASIVE\",\n    \"targetSponsorIndustry\": \"Technology and Telecommunications\",\n    \"additionalContext\": \"Acara kolaborasi dengan komunitas developer Indonesia, banyak founder startup yang akan hadir\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/proposal-builder",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ai",
+                "proposal-builder"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Smart Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"eventId\": \"{{event_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/smart-review",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ai",
+                "smart-review"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Recommendations",
+      "item": [
+        {
+          "name": "Recommendations for Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recommendations/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "recommendations",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "threshold",
+                  "value": "0.6",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recommendations for EO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recommendations/sponsors/{{event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "recommendations",
+                "sponsors",
+                "{{event_id}}"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "threshold",
+                  "value": "0.6",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Saved Events",
+      "item": [
+        {
+          "name": "Save Event",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/saved-events/{{event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "saved-events",
+                "{{event_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Saved Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/saved-events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "saved-events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unsave Event",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/saved-events/{{event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "saved-events",
+                "{{event_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Offers (Company -> EO)",
+      "item": [
+        {
+          "name": "Company Side",
+          "item": [
+            {
+              "name": "Create Offer",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "if (response.success && response.data?.id) {",
+                      "    pm.environment.set(\"offer_id\", response.data.id);",
+                      "    console.log(\"✅ Offer created:\", response.data.id);",
+                      "    console.log(\"   Status:\", response.data.status);",
+                      "    console.log(\"   Initiated by:\", response.data.initiatedBy);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"tierId\": \"{{tier_id}}\",\n    \"message\": \"Halo, kami dari Catalyst Ventures tertarik untuk mendukung TechFest UGM 2026. Acara Anda sangat sejalan dengan misi kami untuk mendukung ekosistem startup teknologi di Indonesia.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/offers",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Offers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/offers/my",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "my"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "PENDING",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20",
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Offer Detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/offers/my/{{offer_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "my",
+                    "{{offer_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Offer",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/offers/my/{{offer_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "my",
+                    "{{offer_id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "EO Side",
+          "item": [
+            {
+              "name": "Incoming Offers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/offers/incoming",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "incoming"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "PENDING",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20",
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Incoming Offer Detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/offers/incoming/{{offer_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "incoming",
+                    "{{offer_id}}"
+                  ]
+                },
+                "description": "Hit endpoint ini saat status `PENDING` akan auto-update jadi `UNDER_REVIEW.`"
+              },
+              "response": []
+            },
+            {
+              "name": "Accept Offer",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/offers/incoming/{{offer_id}}/accept",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "incoming",
+                    "{{offer_id}}",
+                    "accept"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reject Offer",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"reason\": \"Maaf, budget sponsorship dari brand Anda belum cukup untuk tier yang dipilih. Kami harap bisa kolaborasi di event berikutnya.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/offers/incoming/{{offer_id}}/reject",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "offers",
+                    "incoming",
+                    "{{offer_id}}",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pitches (EO -> Company)",
+      "item": [
+        {
+          "name": "EO Side",
+          "item": [
+            {
+              "name": "Create Pitch",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "if (response.success && response.data?.id) {",
+                      "    pm.environment.set(\"pitch_id\", response.data.id);",
+                      "    console.log(\"✅ Pitch created:\", response.data.id);",
+                      "    console.log(\"   Status:\", response.data.status);",
+                      "    console.log(\"   Initiated by:\", response.data.initiatedBy);",
+                      "    console.log(\"   Target company:\", response.data.companyProfile?.companyName);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"companyProfileId\": \"{{company_profile_id}}\",\n    \"tierId\": \"{{tier_id}}\",\n    \"message\": \"Halo Tim Catalyst Ventures, kami dari BEM FT UGM ingin mengundang Anda menjadi sponsor TechFest UGM 2026. Event ini akan dihadiri 2000+ peserta dari berbagai universitas, termasuk founders muda dan engineer talented. Sangat sesuai dengan misi Catalyst untuk mendukung ekosistem startup. Kami menawarkan paket Gold dengan benefit eksklusif - booth utama, keynote speaker slot, dan branding masif. Mari berdiskusi lebih lanjut!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/pitches",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Pitches",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pitches/my",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "my"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Pitch Detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pitches/my/{{pitch_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "my",
+                    "{{pitch_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancel Pitch",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pitches/my/{{pitch_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "my",
+                    "{{pitch_id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Company Side",
+          "item": [
+            {
+              "name": "Incoming Pitches",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pitches/incoming",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "incoming"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Incoming Pitch Detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pitches/incoming/{{pitch_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "incoming",
+                    "{{pitch_id}}"
+                  ]
+                },
+                "description": "Hit ini auto-update PENDING → UNDER_REVIEW."
+              },
+              "response": []
+            },
+            {
+              "name": "Accept Pitch",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pitches/incoming/{{pitch_id}}/accept",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "incoming",
+                    "{{pitch_id}}",
+                    "accept"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reject Pitch",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"reason\": \"Terima kasih untuk pitch-nya, tapi event ini tidak sesuai dengan target audiens kami saat ini. Mari kolaborasi di event berikutnya.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/pitches/incoming/{{pitch_id}}/reject",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pitches",
+                    "incoming",
+                    "{{pitch_id}}",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🔐 Generate Firebase Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();",
+              "if (response.idToken) {",
+              "  pm.environment.set(\"id_token\", response.idToken);",
+              "  console.log(\"✅ Token saved to environment\");",
+              "} else {",
+              "  console.log(\"❌ Failed to get token\");",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test-eo@example.com\",\n  \"password\": \"test12345\",\n  \"returnSecureToken\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={{firebase_api_key}}",
+          "protocol": "https",
+          "host": [
+            "identitytoolkit",
+            "googleapis",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "accounts:signInWithPassword"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{firebase_api_key}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{id_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

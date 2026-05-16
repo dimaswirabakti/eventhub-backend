@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { asyncHandler } from '@/common/utils/async-handler.js';

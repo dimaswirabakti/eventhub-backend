@@ -181,17 +181,73 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 Company only. Idempotent operations.
 
-| Method | Endpoint                 | Description                                                 |
-| ------ | ------------------------ | ----------------------------------------------------------- |
-| GET    | `/saved-events`          | List saved events (with pagination)                         |
+| Method | Endpoint                 | Description                                                |
+| ------ | ------------------------ | ---------------------------------------------------------- |
+| GET    | `/saved-events`          | List saved events (with pagination)                        |
 | POST   | `/saved-events/:eventId` | Save event (idempotent, call multiple times = same result) |
-| DELETE | `/saved-events/:eventId` | Unsave event (idempotent)                                   |
+| DELETE | `/saved-events/:eventId` | Unsave event (idempotent)                                  |
 
 **Response includes `isActive` flag:**
 
 - `true` — event masih PUBLISHED dan belum expired (bisa di-offer)
 - `false` — event sudah closed/cancelled/expired (frontend tampilkan badge sesuai)
 
+### 🤝 Sponsorship Offers (Company -> Event)
+
+Company initiates the offer. EO responds (accept/reject).
+
+#### Company Side
+
+| Method | Endpoint         | Description                                          |
+| ------ | ---------------- | ---------------------------------------------------- |
+| POST   | `/offers`        | Make offer to event (deduct 2 tokens)                |
+| GET    | `/offers/my`     | List offers Company has made                         |
+| GET    | `/offers/my/:id` | Detail offer                                         |
+| DELETE | `/offers/my/:id` | Cancel offer (only PENDING/UNDER_REVIEW/NEGOTIATING) |
+
+#### EO Side
+
+| Method | Endpoint                      | Description                                    |
+| ------ | ----------------------------- | ---------------------------------------------- |
+| GET    | `/offers/incoming`            | List offers received                           |
+| GET    | `/offers/incoming/:id`        | Detail (auto-mark UNDER_REVIEW if was PENDING) |
+| POST   | `/offers/incoming/:id/accept` | Accept                                         |
+| POST   | `/offers/incoming/:id/reject` | Reject with optional reason                    |
+
+### 📣 Sponsorship Pitches (EO -> Company)
+
+EO initiates pitch to specific company. Company responds.
+
+#### EO Side
+
+| Method | Endpoint          | Description                                         |
+| ------ | ----------------- | --------------------------------------------------- |
+| POST   | `/pitches`        | Pitch event to a specific company (deduct 2 tokens) |
+| GET    | `/pitches/my`     | List pitches EO has made                            |
+| GET    | `/pitches/my/:id` | Detail pitch                                        |
+| DELETE | `/pitches/my/:id` | Cancel pitch                                        |
+
+#### Company Side
+
+| Method | Endpoint                       | Description                     |
+| ------ | ------------------------------ | ------------------------------- |
+| GET    | `/pitches/incoming`            | List pitches received           |
+| GET    | `/pitches/incoming/:id`        | Detail (auto-mark UNDER_REVIEW) |
+| POST   | `/pitches/incoming/:id/accept` | Accept                          |
+| POST   | `/pitches/incoming/:id/reject` | Reject with reason              |
+
+### Status Lifecycle
+
+PENDING → UNDER_REVIEW → NEGOTIATING\* → ACCEPTED / REJECTED / CANCELLED
+
+\*NEGOTIATING status reserved for future messaging integration
+
+**Important Rules:**
+
+- 1 connection per event-company pair (Offer OR Pitch, not both)
+- Only PUBLISHED events can be interacted with
+- After ACCEPTED/REJECTED/CANCELLED, status is immutable
+- Tier slots are enforced — if tier `maxSlots: 1` is reached (ACCEPTED), new ones cannot be accepted
 
 ---
 
@@ -359,8 +415,6 @@ Content-Type: application/json
 
 ## Belum Dibuat (Coming Soon)
 
-- Sponsorship Offer (Company → Event)
 - Messaging (async chat dalam offer)
-- Matchmaking (FYP-style rekomendasi)
 - Midtrans payment integration
 - File upload ke Google Cloud Storage

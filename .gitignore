@@ -32,7 +32,6 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output/
-docs/EevntHub-backend.postman_collection.json
 docs/EventHub.postman_environment.json
 
 # Prisma

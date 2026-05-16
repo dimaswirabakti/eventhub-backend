@@ -12,6 +12,8 @@ import { aiRoutes } from '@/modules/ai/ai.routes.js';
 import { matchmakingRoutes } from '@/modules/matchmaking/matchmaking.routes.js';
 import { profileRoutes } from '@/modules/profile/profile.routes.js';
 import { savedEventsRoutes } from '@/modules/saved-events/saved-events.routes.js';
+import { offersRoutes } from '@/modules/offers/offers.routes.js';
+import { pitchesRoutes } from '@/modules/offers/pitches.routes.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -41,9 +43,11 @@ export const createApp = (): Express => {
   // API routes
   app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
   app.use(`/api/${env.API_VERSION}/profile`, profileRoutes);
-  app.use(`/api/${env.API_VERSION}/saved-events`, savedEventsRoutes);
   app.use(`/api/${env.API_VERSION}/events`, eventsRoutes);
+  app.use(`/api/${env.API_VERSION}/saved-events`, savedEventsRoutes);
   app.use(`/api/${env.API_VERSION}/catalog`, catalogRoutes);
+  app.use(`/api/${env.API_VERSION}/offers`, offersRoutes);
+  app.use(`/api/${env.API_VERSION}/pitches`, pitchesRoutes);
   app.use(`/api/${env.API_VERSION}/ai`, aiRoutes);
   app.use(`/api/${env.API_VERSION}/recommendations`, matchmakingRoutes);
 
