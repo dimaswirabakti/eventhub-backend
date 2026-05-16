@@ -7,7 +7,7 @@ B2B Sponsorship Marketplace API.
 Frontend repository: <link-repo-frontend-mu>
 
 ## Stack
-- Node.js 22 + TypeScript 5
+- Node.js 24 + TypeScript 5
 - Express 5
 - PostgreSQL (Neon) + Prisma 7 + pgvector
 - Firebase Auth, Gemini AI 2.5, Firebase Storage
