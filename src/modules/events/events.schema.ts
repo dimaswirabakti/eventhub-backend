@@ -113,6 +113,11 @@ export const eventSlugParamSchema = z.object({
   slug: z.string().min(1),
 });
 
+// Update draft content proposal (hasil edit dari AI-generated)
+export const updateProposalContentSchema = z.object({
+  content: z.string().min(50).max(50000),
+});
+
 // TYPE EXPORTS
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 export type UpdateEventInput = z.infer<typeof updateEventSchema>;
@@ -120,3 +125,4 @@ export type CreateTierInput = z.infer<typeof createTierSchema>;
 export type UpdateTierInput = z.infer<typeof updateTierSchema>;
 export type SetProposalInput = z.infer<typeof setProposalSchema>;
 export type CatalogFilter = z.infer<typeof catalogFilterSchema>;
+export type UpdateProposalContentInput = z.infer<typeof updateProposalContentSchema>;

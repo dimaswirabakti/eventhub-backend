@@ -11,6 +11,7 @@ import {
   tierIdParamSchema,
   updateEventSchema,
   updateTierSchema,
+  updateProposalContentSchema,
 } from './events.schema.js';
 import * as eventController from './events.controller.js';
 
@@ -58,6 +59,13 @@ eoRouter.post(
   validate(eventIdParamSchema, 'params'),
   validate(setProposalSchema),
   eventController.setProposal
+);
+
+eoRouter.patch(
+  '/:id/proposal/content',
+  validate(eventIdParamSchema, 'params'),
+  validate(updateProposalContentSchema),
+  eventController.updateProposalContent
 );
 
 // PUBLIC CATALOG ROUTES

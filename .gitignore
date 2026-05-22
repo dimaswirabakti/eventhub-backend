@@ -47,3 +47,4 @@ gcs-service-account.json
 .tmp/
 
 /src/generated/prisma
+docs/PROJECT_CONTEXT.md

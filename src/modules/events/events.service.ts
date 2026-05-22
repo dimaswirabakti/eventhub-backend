@@ -15,7 +15,7 @@ import type {
   UpdateEventInput,
   UpdateTierInput,
 } from './events.schema.js';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { embedEvent } from '@/modules/matchmaking/matchmaking.service.js';
 
 // Helper: bersihkan optional field undefined sebelum kirim ke Prisma
@@ -303,6 +303,29 @@ export const setProposal = async (userId: string, eventId: string, input: SetPro
     where: { eventId },
     create: { eventId, ...data },
     update: data,
+  });
+};
+
+// Update content draft proposal, hanya yg source nya GENERATED.
+export const updateProposalContent = async (userId: string, eventId: string, content: string) => {
+  await assertEventOwnership(eventId, userId);
+
+  const proposal = await prisma.proposal.findUnique({ where: { eventId } });
+  if (!proposal) {
+    throw new NotFoundError('Proposal');
+  }
+  if (proposal.source !== 'GENERATED') {
+    throw new AppError('Only AI-generated proposals can be edited as draft', StatusCodes.CONFLICT);
+  }
+
+  return prisma.proposal.update({
+    where: { eventId },
+    data: {
+      content,
+      // Reset AI review karena content berubah
+      aiScore: null,
+      aiFeedback: Prisma.JsonNull,
+    },
   });
 };
 
