@@ -100,19 +100,20 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 ### 🎪 Events (EO Only)
 
-| Method | Endpoint                    | Description                  |
-| ------ | --------------------------- | ---------------------------- |
-| POST   | `/events`                   | Create event (draft)         |
-| GET    | `/events/my`                | List event milik EO          |
-| GET    | `/events/:id`               | Get event by ID (owner only) |
-| PATCH  | `/events/:id`               | Update event                 |
-| DELETE | `/events/:id`               | Delete event                 |
-| POST   | `/events/:id/publish`       | Publish event ke katalog     |
-| POST   | `/events/:id/close`         | Tutup event                  |
-| POST   | `/events/:id/tiers`         | Tambah sponsorship tier      |
-| PATCH  | `/events/:id/tiers/:tierId` | Update tier                  |
-| DELETE | `/events/:id/tiers/:tierId` | Delete tier                  |
-| POST   | `/events/:id/proposal`      | Set/upload proposal          |
+| Method | Endpoint                       | Description                                   |
+| ------ | ------------------------------ | --------------------------------------------- |
+| POST   | `/events`                      | Create event (draft)                          |
+| GET    | `/events/my`                   | List event milik EO                           |
+| GET    | `/events/:id`                  | Get event by ID (owner only)                  |
+| PATCH  | `/events/:id`                  | Update event                                  |
+| DELETE | `/events/:id`                  | Delete event                                  |
+| POST   | `/events/:id/publish`          | Publish event ke katalog                      |
+| POST   | `/events/:id/close`            | Tutup event                                   |
+| POST   | `/events/:id/tiers`            | Tambah sponsorship tier                       |
+| PATCH  | `/events/:id/tiers/:tierId`    | Update tier                                   |
+| DELETE | `/events/:id/tiers/:tierId`    | Delete tier                                   |
+| POST   | `/events/:id/proposal`         | Set/upload proposal                           |
+| PATCH  | `/events/:id/proposal/content` | Edit draft content dari AI-generated proposal |
 
 ### 🌐 Public Catalog (No Auth)
 
@@ -280,6 +281,20 @@ PENDING → UNDER_REVIEW → NEGOTIATING\* → ACCEPTED / REJECTED / CANCELLED
 3. Buka detail event (GET /catalog/events/:slug)
 4. (Akan datang) Make offer ke event
 ```
+
+### Proposal Editing Flow (only for AI-Generated Proposal)
+
+1. `POST /ai/proposal-builder` → generate proposal, tersimpan sebagai `content` (JSON string), `source: GENERATED`
+2. `PATCH /events/:id/proposal/content` → EO edit draft (bisa berkali-kali). Setiap edit me-reset `aiScore` & `aiFeedback` ke null karena content berubah
+3. Frontend generate PDF dari content final + upload ke Firebase Storage
+4. `POST /events/:id/proposal` → finalize dengan `{ source: "GENERATED", fileUrl: "<firebase-url>" }`
+
+**Catatan:** Hanya proposal `source: GENERATED` yang bisa di-edit via endpoint content. Proposal `source: UPLOAD` (PDF langsung) tidak punya draft content untuk diedit.
+
+### Viewing Proposals
+
+- **POV EO ingin melihat proposal salah satu event-nya:** `GET /events/:id` returns full proposal (content + fileUrl + aiScore + aiFeedback)
+- **POV Company / Public ingin melihat proposal suatu event:** `GET /catalog/events/:slug` returns proposal `source` + `fileUrl` only (proposal is public; EO contact info is gated behind making an offer)
 
 ---
 

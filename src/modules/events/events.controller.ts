@@ -10,6 +10,7 @@ import type {
   SetProposalInput,
   UpdateEventInput,
   UpdateTierInput,
+  UpdateProposalContentInput,
 } from './events.schema.js';
 
 // Helper: get param yang sudah divalidasi (dari res.locals) atau fallback ke req.params
@@ -112,6 +113,18 @@ export const setProposal = asyncHandler(async (req: Request, res: Response) => {
     req.user.id,
     getParam(req, res, 'id'),
     req.body as SetProposalInput
+  );
+  res.json({ success: true, data: proposal });
+});
+
+// UPDATE AI-GENERATED PROPOSAL
+export const updateProposalContent = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user) throw new UnauthorizedError();
+  const { content } = req.body as UpdateProposalContentInput;
+  const proposal = await eventService.updateProposalContent(
+    req.user.id,
+    getParam(req, res, 'id'),
+    content
   );
   res.json({ success: true, data: proposal });
 });

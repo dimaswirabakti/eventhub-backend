@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "ca2993be-ba74-4c41-a6f6-bbd3a5cdffb2",
     "name": "EevntHub-backend",
-    "description": "Contoh Salah Satu Workflow Testing:  \n  \nStep 1: Run \"🔐 Generate Firebase Token\" → token auto-save  \nStep 2: Run \"POST Create Event\" → event_id auto-save  \nStep 3: Run \"POST Create Tier\" → pakai {{event_id}}  \nStep 4: Run \"POST Set Proposal\" → pakai {{event_id}}  \nStep 5: Run \"POST Publish Event\" → pakai {{event_id}}  \nStep 6: Run \"GET Catalog\" → public, no auth",
+    "description": "Dokumentasi untuk membantu testing bisa dilihat disini:  \n[https://github.com/dimaswirabakti/eventhub-backend/blob/main/docs/API.md](https://github.com/dimaswirabakti/eventhub-backend/blob/main/docs/API.md)\n\nKalau not found berarti repository github-nya masih private😅.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "37124877"
   },
@@ -297,7 +297,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"source\": \"UPLOAD\",\n    \"fileUrl\": \"https://example.com/proposal-techfest-2026.pdf\"\n}",
+              "raw": "{\n    \"source\": \"GENERATED\",\n    \"fileUrl\": \"https://firebasestorage.googleapis.com/v0/b/eventhub-oslofam.firebasestorage.app/o/dummy_tidak_ada_filenya.pdf\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -352,6 +352,54 @@
                 "my"
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "My Event by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Proposal Content",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"{\\\"executiveSummary\\\":\\\"EDITEDD TechFest UGM 2026 adalah festival teknologi terbesar di Yogyakarta yang telah diedit oleh panitia untuk lebih persuasif.\\\",\\\"eventBackground\\\":\\\"Diselenggarakan oleh BEM FT UGM sebagai wadah kolaborasi mahasiswa teknologi se-Indonesia.\\\",\\\"objectives\\\":[\\\"Membangun ekosistem startup kampus\\\",\\\"Menghubungkan mahasiswa dengan industri\\\"],\\\"targetAudience\\\":\\\"2000+ mahasiswa teknologi usia 18-25 tahun\\\",\\\"whyThisEvent\\\":\\\"Event ini menjangkau talenta digital muda yang merupakan early adopter produk teknologi.\\\",\\\"sponsorshipBenefits\\\":[\\\"Logo di banner utama\\\",\\\"Booth eksklusif\\\",\\\"Slot keynote\\\"],\\\"callToAction\\\":\\\"Mari berkolaborasi membangun masa depan teknologi Indonesia.\\\"}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/proposal/content",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "proposal",
+                "content"
+              ]
+            },
+            "description": "**Catatan:** `content` di-store sebagai string. Kalau frontend menyimpan JSON terstruktur, mereka akan `JSON.stringify()` dulu sebelum kirim. Untuk testing, kamu bisa pakai string biasa juga — yang penting min 50 karakter."
           },
           "response": []
         }
