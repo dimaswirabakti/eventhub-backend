@@ -7,6 +7,7 @@ B2B Sponsorship Marketplace API.
 Frontend repository: <link-repo-frontend-mu>
 
 ## Stack
+
 - Node.js 24 + TypeScript 5
 - Express 5
 - PostgreSQL (Neon) + Prisma 7 + pgvector
@@ -32,6 +33,6 @@ Server akan jalan di http://localhost:8080
 - [✅] Billing (Token management)
 - [✅] Matchmaking (pgvector similarity)
 - [✅] Sponsorship Offer (Company → Event)
-- [ ] Messaging (async chat)
-- [ ] Payment (Midtrans top-up)
+- [✅] Payment (Midtrans top-up)
 - [ ] File Storage (GCS upload)
+- [ ] Messaging (async chat)

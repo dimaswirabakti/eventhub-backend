@@ -14,6 +14,7 @@ import { profileRoutes } from '@/modules/profile/profile.routes.js';
 import { savedEventsRoutes } from '@/modules/saved-events/saved-events.routes.js';
 import { offersRoutes } from '@/modules/offers/offers.routes.js';
 import { pitchesRoutes } from '@/modules/offers/pitches.routes.js';
+import { billingRoutes } from '@/modules/billing/billing.routes.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -50,6 +51,7 @@ export const createApp = (): Express => {
   app.use(`/api/${env.API_VERSION}/pitches`, pitchesRoutes);
   app.use(`/api/${env.API_VERSION}/ai`, aiRoutes);
   app.use(`/api/${env.API_VERSION}/recommendations`, matchmakingRoutes);
+  app.use(`/api/${env.API_VERSION}/billing`, billingRoutes);
 
   // 404 & error handler
   app.use(notFoundHandler);

@@ -237,6 +237,33 @@ EO initiates pitch to specific company. Company responds.
 | POST   | `/pitches/incoming/:id/accept` | Accept                          |
 | POST   | `/pitches/incoming/:id/reject` | Reject with reason              |
 
+### 💳 Billing & Payment
+
+| Method | Endpoint                | Auth                      | Description                               |
+| ------ | ----------------------- | ------------------------- | ----------------------------------------- |
+| GET    | `/billing/packages`     | Required                  | List paket top-up token                   |
+| GET    | `/billing/balance`      | Required                  | Saldo token user                          |
+| POST   | `/billing/topup`        | Required                  | Buat transaksi top-up (return Snap token) |
+| POST   | `/billing/webhook`      | None (signature-verified) | Midtrans notification handler             |
+| GET    | `/billing/transactions` | Required                  | Riwayat transaksi top-up                  |
+| GET    | `/billing/usage`        | Required                  | Riwayat pemakaian token                   |
+
+**Token Packages:**
+| Package | Tokens | Price |
+|---------|--------|-------|
+| STARTER | 50 | Rp 50.000 |
+| PRO | 150 | Rp 125.000 |
+| PREMIUM | 500 | Rp 350.000 |
+
+**Payment Flow:**
+
+1. `POST /billing/topup { packageId }` → backend create TokenTransaction (PENDING) + return `snapToken`
+2. Frontend buka Midtrans Snap popup dengan `snapToken` + `clientKey`
+3. User bayar → Midtrans kirim webhook ke `POST /billing/webhook`
+4. Backend verifikasi signature (SHA512) → update transaction SUCCESS + increment `tokenBalance` (atomic)
+
+**Important:** Token hanya ditambahkan via webhook (signature-verified), bukan dari klaim frontend. Webhook bersifat idempotent, yaitu duplicate notification tidak menambah token dua kali.
+
 ### Status Lifecycle
 
 PENDING → UNDER_REVIEW → NEGOTIATING\* → ACCEPTED / REJECTED / CANCELLED

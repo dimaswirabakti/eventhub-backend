@@ -48,3 +48,4 @@ gcs-service-account.json
 
 /src/generated/prisma
 docs/PROJECT_CONTEXT.md
+docs/PAYMENT_GUIDE.md

@@ -1092,6 +1092,128 @@
       ]
     },
     {
+      "name": "billing",
+      "item": [
+        {
+          "name": "List Packages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/billing/packages",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "billing",
+                "packages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/billing/balance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "billing",
+                "balance"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Top Up",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.success) {",
+                  "    pm.environment.set(\"midtrans_order_id\", r.data.transaction.midtransOrderId);",
+                  "    console.log(\"✅ Snap token:\", r.data.snapToken);",
+                  "    console.log(\"   Redirect URL:\", r.data.redirectUrl);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"packageId\": \"PRO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/billing/topup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "billing",
+                "topup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/billing/transactions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "billing",
+                "transactions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Usage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/billing/usage",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "billing",
+                "usage"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "🔐 Generate Firebase Token",
       "event": [
         {
