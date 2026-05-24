@@ -238,6 +238,22 @@ EO initiates pitch to specific company. Company responds.
 | POST   | `/pitches/incoming/:id/accept` | Accept                          |
 | POST   | `/pitches/incoming/:id/reject` | Reject with reason              |
 
+### 💬 Messages (In-Platform Chat)
+
+Async chat di dalam offer/pitch. Hanya 2 peserta (EO owner + Company) yang bisa akses.
+
+| Method | Endpoint                    | Auth        | Description                                     |
+| ------ | --------------------------- | ----------- | ----------------------------------------------- |
+| POST   | `/offers/:offerId/messages` | Participant | Kirim pesan. Pesan pertama → status NEGOTIATING |
+| GET    | `/offers/:offerId/messages` | Participant | List pesan (oldest-first) + auto mark-as-read   |
+
+**Catatan:**
+
+- Satu endpoint untuk melayani offer (Company-initiated) DAN pitch (EO-initiated).
+- Chat hanya bisa kirim saat status PENDING/UNDER_REVIEW/NEGOTIATING, setelah closed jadi read-only.
+- Tidak ada real-time/notifikasi (polling dari frontend kalau perlu refresh).
+- `senderId` adalah User ID (bukan profile ID).
+
 ### 💳 Billing & Payment
 
 | Method | Endpoint                | Auth                      | Description                               |

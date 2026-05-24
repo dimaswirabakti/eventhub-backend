@@ -34,5 +34,5 @@ Server akan jalan di http://localhost:8080
 - [✅] Matchmaking (pgvector similarity)
 - [✅] Sponsorship Offer (Company → Event)
 - [✅] Payment (Midtrans top-up)
-- [ ] File Storage (GCS upload)
-- [ ] Messaging (async chat)
+- [✅] File Storage (GCS upload)
+- [✅] Messaging (async chat)
