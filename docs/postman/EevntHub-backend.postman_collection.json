@@ -220,103 +220,326 @@
       "name": "Events (EO)",
       "item": [
         {
-          "name": "Create Event",
-          "event": [
+          "name": "CRUD",
+          "item": [
             {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "const response = pm.response.json();",
-                  "if (response.success && response.data?.id) {",
-                  "  pm.environment.set(\"event_id\", response.data.id);",
-                  "  console.log(\"✅ Event ID saved:\", response.data.id);",
-                  "}"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"title\": \"TechFest UGM 2026\",\n    \"description\": \"Festival teknologi tahunan terbesar di UGM dengan peserta dari berbagai universitas se-Indonesia. Menampilkan keynote speaker, workshop coding, hackathon, dan startup showcase.\",\n    \"category\": \"TECHNOLOGY\",\n    \"theme\": \"AI & Future of Work\",\n    \"startDate\": \"2026-08-15\",\n    \"endDate\": \"2026-08-17\",\n    \"city\": \"Yogyakarta\",\n    \"venue\": \"Grha Sabha Pramana UGM\",\n    \"isOnline\": false,\n    \"expectedAttendees\": 2000,\n    \"audienceAgeMin\": 18,\n    \"audienceAgeMax\": 25,\n    \"audienceInterests\": [\n        \"technology\",\n        \"startup\",\n        \"AI\",\n        \"programming\"\n    ]\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+              "name": "Create Event",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "if (response.success && response.data?.id) {",
+                      "  pm.environment.set(\"event_id\", response.data.id);",
+                      "  console.log(\"✅ Event ID saved:\", response.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
                 }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/events",
-              "host": [
-                "{{base_url}}"
               ],
-              "path": [
-                "events"
-              ]
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"title\": \"TechFest UGM 2026\",\n    \"description\": \"Festival teknologi tahunan terbesar di UGM dengan peserta dari berbagai universitas se-Indonesia. Menampilkan keynote speaker, workshop coding, hackathon, dan startup showcase.\",\n    \"category\": \"TECHNOLOGY\",\n    \"theme\": \"AI & Future of Work\",\n    \"startDate\": \"2026-08-15\",\n    \"endDate\": \"2026-08-17\",\n    \"city\": \"Yogyakarta\",\n    \"venue\": \"Grha Sabha Pramana UGM\",\n    \"isOnline\": false,\n    \"expectedAttendees\": 2000,\n    \"audienceAgeMin\": 18,\n    \"audienceAgeMax\": 25,\n    \"audienceInterests\": [\n        \"technology\",\n        \"startup\",\n        \"AI\",\n        \"programming\"\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Events",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/events/my",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "my"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Event by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Event",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "// semua field optional, kirim yang mau diubah saja\n{\n    \"title\": \"TechFest UGM 2026 - Updated Edition\",\n    \"description\": \"Festival teknologi terbesar di Yogyakarta, kini dengan rangkaian acara yang lebih lengkap termasuk startup pitch competition dan AI workshop.\",\n    \"expectedAttendees\": 2500,\n    \"audienceInterests\": [\n        \"technology\",\n        \"startup\",\n        \"AI\",\n        \"programming\",\n        \"entrepreneurship\"\n    ]\n}\n// kalau title diubah, slug otomatis di-regenerate.\n// Kalau event sudah PUBLISHED dan field embed-relevant berubah, embedding di-refresh otomatis.",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Event",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}"
+                  ]
+                },
+                "description": "##### Akan return 409 kalau event punya offer dengan status ACCEPTED.\n\n##### Ketika \"event deleted\", file banner + proposal PDF di Firebase Storage ikut dibersihkan otomatis."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Banner",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}/banner",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}",
+                    "banner"
+                  ]
+                },
+                "description": "##### Return 409 kalau event tidak punya banner.\n\n##### Jika return success, file dihapus dari Firebase Storage + `bannerUrl di database` di-set null."
+              },
+              "response": []
             }
-          },
-          "response": []
+          ]
         },
         {
-          "name": "Create Tier",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Gold Sponsor\",\n    \"price\": 15000000,\n    \"benefits\": [\n        \"Logo besar di banner utama\",\n        \"Booth eksklusif 3x3m\",\n        \"5 menit slot speaker session\",\n        \"Social media mention\"\n    ],\n    \"maxSlots\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+          "name": "Tier Management",
+          "item": [
+            {
+              "name": "Create Tier",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const r = pm.response.json();",
+                      "if (r.success && r.data?.id) {",
+                      "    pm.environment.set(\"tier_id\", r.data.id);",
+                      "    console.log(\"✅ Tier created, tier_id saved:\", r.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
                 }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/events/{{event_id}}/tiers",
-              "host": [
-                "{{base_url}}"
               ],
-              "path": [
-                "events",
-                "{{event_id}}",
-                "tiers"
-              ]
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Gold Sponsor\",\n    \"price\": 15000000,\n    \"benefits\": [\n        \"Logo besar di banner utama\",\n        \"Booth eksklusif 3x3m\",\n        \"5 menit slot speaker session\",\n        \"Social media mention\"\n    ],\n    \"maxSlots\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}/tiers",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}",
+                    "tiers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Tier",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "// partial, semua optional\n{\n    \"price\": 18000000,\n    \"benefits\": [\n        \"Logo besar di banner utama\",\n        \"Booth eksklusif 4x4m\",\n        \"10 menit slot keynote session\",\n        \"Social media campaign\",\n        \"Logo di merchandise resmi\"\n    ],\n    \"maxSlots\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}/tiers/{{tier_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}",
+                    "tiers",
+                    "{{tier_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Tier",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}/tiers/{{tier_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}",
+                    "tiers",
+                    "{{tier_id}}"
+                  ]
+                },
+                "description": "##### Akan return 409 kalau tier sudah punya offer."
+              },
+              "response": []
             }
-          },
-          "response": []
+          ]
         },
         {
-          "name": "Set Proposal",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"source\": \"GENERATED\",\n    \"fileUrl\": \"https://firebasestorage.googleapis.com/v0/b/eventhub-oslofam.firebasestorage.app/o/dummy_tidak_ada_filenya.pdf\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+          "name": "Proposal",
+          "item": [
+            {
+              "name": "Set Proposal",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"source\": \"GENERATED\",\n    \"fileUrl\": \"https://firebasestorage.googleapis.com/v0/b/eventhub-oslofam.firebasestorage.app/o/dummy_tidak_ada_filenya.pdf\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}/proposal",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}",
+                    "proposal"
+                  ]
                 }
-              }
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{base_url}}/events/{{event_id}}/proposal",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "events",
-                "{{event_id}}",
-                "proposal"
-              ]
+            {
+              "name": "Update Proposal Content",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"content\": \"{\\\"executiveSummary\\\":\\\"EDITEDD TechFest UGM 2026 adalah festival teknologi terbesar di Yogyakarta yang telah diedit oleh panitia untuk lebih persuasif.\\\",\\\"eventBackground\\\":\\\"Diselenggarakan oleh BEM FT UGM sebagai wadah kolaborasi mahasiswa teknologi se-Indonesia.\\\",\\\"objectives\\\":[\\\"Membangun ekosistem startup kampus\\\",\\\"Menghubungkan mahasiswa dengan industri\\\"],\\\"targetAudience\\\":\\\"2000+ mahasiswa teknologi usia 18-25 tahun\\\",\\\"whyThisEvent\\\":\\\"Event ini menjangkau talenta digital muda yang merupakan early adopter produk teknologi.\\\",\\\"sponsorshipBenefits\\\":[\\\"Logo di banner utama\\\",\\\"Booth eksklusif\\\",\\\"Slot keynote\\\"],\\\"callToAction\\\":\\\"Mari berkolaborasi membangun masa depan teknologi Indonesia.\\\"}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/events/{{event_id}}/proposal/content",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "events",
+                    "{{event_id}}",
+                    "proposal",
+                    "content"
+                  ]
+                },
+                "description": "**Catatan:** `content` di-store sebagai string. Kalau frontend menyimpan JSON terstruktur, mereka akan `JSON.stringify()` dulu sebelum kirim. Untuk testing, kamu bisa pakai string biasa juga (yang penting min 50 karakter)."
+              },
+              "response": []
             }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Publish Event",
@@ -338,68 +561,21 @@
           "response": []
         },
         {
-          "name": "My Events",
+          "name": "Close Event",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/events/my",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "events",
-                "my"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "My Event by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/events/{{event_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "events",
-                "{{event_id}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Proposal Content",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"content\": \"{\\\"executiveSummary\\\":\\\"EDITEDD TechFest UGM 2026 adalah festival teknologi terbesar di Yogyakarta yang telah diedit oleh panitia untuk lebih persuasif.\\\",\\\"eventBackground\\\":\\\"Diselenggarakan oleh BEM FT UGM sebagai wadah kolaborasi mahasiswa teknologi se-Indonesia.\\\",\\\"objectives\\\":[\\\"Membangun ekosistem startup kampus\\\",\\\"Menghubungkan mahasiswa dengan industri\\\"],\\\"targetAudience\\\":\\\"2000+ mahasiswa teknologi usia 18-25 tahun\\\",\\\"whyThisEvent\\\":\\\"Event ini menjangkau talenta digital muda yang merupakan early adopter produk teknologi.\\\",\\\"sponsorshipBenefits\\\":[\\\"Logo di banner utama\\\",\\\"Booth eksklusif\\\",\\\"Slot keynote\\\"],\\\"callToAction\\\":\\\"Mari berkolaborasi membangun masa depan teknologi Indonesia.\\\"}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/events/{{event_id}}/proposal/content",
+              "raw": "{{base_url}}/events/{{event_id}}/close",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "events",
                 "{{event_id}}",
-                "proposal",
-                "content"
+                "close"
               ]
-            },
-            "description": "**Catatan:** `content` di-store sebagai string. Kalau frontend menyimpan JSON terstruktur, mereka akan `JSON.stringify()` dulu sebelum kirim. Untuk testing, kamu bisa pakai string biasa juga — yang penting min 50 karakter."
+            }
           },
           "response": []
         }
@@ -1206,6 +1382,58 @@
               "path": [
                 "billing",
                 "usage"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Halo, ini adalah fitur kirim pesan.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/offers/{{offer_id}}/messages",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "offers",
+                "{{offer_id}}",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Message",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/offers/{{offer_id}}/messages",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "offers",
+                "{{offer_id}}",
+                "messages"
               ]
             }
           },

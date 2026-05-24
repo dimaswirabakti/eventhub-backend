@@ -32,7 +32,6 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output/
-docs/EventHub.postman_environment.json
 
 # Prisma
 prisma/migrations/dev.db*
@@ -48,4 +47,3 @@ gcs-service-account.json
 
 /src/generated/prisma
 docs/PROJECT_CONTEXT.md
-docs/PAYMENT_GUIDE.md
