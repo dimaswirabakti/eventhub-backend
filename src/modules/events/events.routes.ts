@@ -34,7 +34,6 @@ eoRouter.delete('/:id', validate(eventIdParamSchema, 'params'), eventController.
 eoRouter.post('/:id/publish', validate(eventIdParamSchema, 'params'), eventController.publish);
 eoRouter.post('/:id/close', validate(eventIdParamSchema, 'params'), eventController.close);
 
-// Tier management
 eoRouter.post(
   '/:id/tiers',
   validate(eventIdParamSchema, 'params'),
@@ -53,20 +52,20 @@ eoRouter.delete(
   eventController.deleteTier
 );
 
-// Proposal
 eoRouter.post(
   '/:id/proposal',
   validate(eventIdParamSchema, 'params'),
   validate(setProposalSchema),
   eventController.setProposal
 );
-
 eoRouter.patch(
   '/:id/proposal/content',
   validate(eventIdParamSchema, 'params'),
   validate(updateProposalContentSchema),
   eventController.updateProposalContent
 );
+
+eoRouter.delete('/:id/banner', eventController.deleteBanner);
 
 // PUBLIC CATALOG ROUTES
 const catalogRouter: Router = Router();

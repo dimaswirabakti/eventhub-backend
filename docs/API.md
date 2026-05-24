@@ -100,20 +100,21 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 ### 🎪 Events (EO Only)
 
-| Method | Endpoint                       | Description                                   |
-| ------ | ------------------------------ | --------------------------------------------- |
-| POST   | `/events`                      | Create event (draft)                          |
-| GET    | `/events/my`                   | List event milik EO                           |
-| GET    | `/events/:id`                  | Get event by ID (owner only)                  |
-| PATCH  | `/events/:id`                  | Update event                                  |
-| DELETE | `/events/:id`                  | Delete event                                  |
-| POST   | `/events/:id/publish`          | Publish event ke katalog                      |
-| POST   | `/events/:id/close`            | Tutup event                                   |
-| POST   | `/events/:id/tiers`            | Tambah sponsorship tier                       |
-| PATCH  | `/events/:id/tiers/:tierId`    | Update tier                                   |
-| DELETE | `/events/:id/tiers/:tierId`    | Delete tier                                   |
-| POST   | `/events/:id/proposal`         | Set/upload proposal                           |
-| PATCH  | `/events/:id/proposal/content` | Edit draft content dari AI-generated proposal |
+| Method | Endpoint                       | Description                      |
+| ------ | ------------------------------ | -------------------------------- |
+| POST   | `/events`                      | Create event (draft)             |
+| GET    | `/events/my`                   | List event milik EO              |
+| GET    | `/events/:id`                  | Get event by ID (owner only)     |
+| PATCH  | `/events/:id`                  | Update event                     |
+| DELETE | `/events/:id`                  | Delete event                     |
+| POST   | `/events/:id/publish`          | Publish event ke katalog         |
+| POST   | `/events/:id/close`            | Tutup event                      |
+| POST   | `/events/:id/tiers`            | Tambah sponsorship tier          |
+| PATCH  | `/events/:id/tiers/:tierId`    | Update tier                      |
+| DELETE | `/events/:id/tiers/:tierId`    | Delete tier                      |
+| POST   | `/events/:id/proposal`         | Set/upload proposal              |
+| PATCH  | `/events/:id/proposal/content` | Edit draft AI-generated proposal |
+| DELETE | `/events/:id/banner`           | Hapus banner event               |
 
 ### 🌐 Public Catalog (No Auth)
 

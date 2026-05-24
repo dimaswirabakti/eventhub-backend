@@ -21,11 +21,8 @@ export const isValidFirebaseStorageUrl = (url: string): boolean => {
   }
 };
 
-/**
- * Extract file path dari Firebase Storage download URL.
- * Contoh: https://firebasestorage.googleapis.com/v0/b/<bucket>/o/events%2Fbanners%2Fabc.jpg?alt=media&token=...
- *        -> menjadi events/banners/abc.jpg
- */
+// Fungsinya: https://firebasestorage.googleapis.com/v0/b/<bucket>/o/events%2Fbanners%2Fabc.jpg?alt=media&token=...
+//            -> menjadi events/banners/abc.jpg
 export const extractStoragePath = (url: string): string | null => {
   try {
     const parsed = new URL(url);

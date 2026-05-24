@@ -141,3 +141,9 @@ export const publicDetail = asyncHandler(async (req: Request, res: Response) => 
   const event = await eventService.getPublicEventBySlug(getParam(req, res, 'slug'));
   res.json({ success: true, data: event });
 });
+
+export const deleteBanner = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user) throw new UnauthorizedError();
+  const event = await eventService.deleteEventBanner(req.user.id, req.params.id! as string);
+  res.json({ success: true, data: event });
+});

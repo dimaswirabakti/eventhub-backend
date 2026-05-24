@@ -17,6 +17,8 @@ import type {
 } from './events.schema.js';
 import { Prisma } from '@prisma/client';
 import { embedEvent } from '@/modules/matchmaking/matchmaking.service.js';
+import { deleteStorageFile } from '@/common/utils/storage.js';
+import { logger } from '@/config/logger.js';
 
 // Helper: bersihkan optional field undefined sebelum kirim ke Prisma
 const stripUndefined = <T extends Record<string, unknown>>(
@@ -182,8 +184,47 @@ export const deleteEvent = async (userId: string, eventId: string) => {
     );
   }
 
+  // Ambil file URLs sebelum delete (untuk cleanup storage)
+  const proposal = await prisma.proposal.findUnique({
+    where: { eventId },
+    select: { fileUrl: true },
+  });
+
   await prisma.event.delete({ where: { id: eventId } });
+
+  if (event.bannerUrl) {
+    void deleteStorageFile(event.bannerUrl).catch((err: unknown) => {
+      logger.error({ err, eventId }, 'Failed to cleanup event banner');
+    });
+  }
+  // Proposal PDF
+  if (proposal?.fileUrl) {
+    void deleteStorageFile(proposal.fileUrl).catch((err: unknown) => {
+      logger.error({ err, eventId }, 'Failed to cleanup proposal file');
+    });
+  }
+
   return { id: event.id, deleted: true };
+};
+
+// Hapus banner dari storage dan set bannerUrl null di DB.
+export const deleteEventBanner = async (userId: string, eventId: string) => {
+  const event = await assertEventOwnership(eventId, userId);
+
+  if (!event.bannerUrl) {
+    throw new AppError('Event has no banner to delete', StatusCodes.CONFLICT);
+  }
+
+  void deleteStorageFile(event.bannerUrl).catch((err: unknown) => {
+    logger.error({ err, eventId }, 'Failed to delete banner file from storage');
+  });
+
+  const updated = await prisma.event.update({
+    where: { id: eventId },
+    data: { bannerUrl: null },
+  });
+
+  return updated;
 };
 
 // PUBLISH EVENT
