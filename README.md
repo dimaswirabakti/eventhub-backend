@@ -2,7 +2,7 @@
 
 B2B Sponsorship Marketplace API.
 
-📖 **[Lihat API Documentation](./docs/API.md)** untuk dokumentasi lengkap endpoint, dan import [Postman Collection](./docs/EevntHub-backend.postman_collection.json) untuk testing.
+📖 **[Lihat folder docs/](./docs)** untuk dokumentasi back-end serta testing yang lengkap.
 
 Frontend repository: <link-repo-frontend-mu>
 
@@ -11,7 +11,7 @@ Frontend repository: <link-repo-frontend-mu>
 - Node.js 24 + TypeScript 5
 - Express 5
 - PostgreSQL (Neon) + Prisma 7 + pgvector
-- Firebase Auth, Gemini AI 2.5, Firebase Storage
+- Firebase Auth, Gemini Flash AI 2.5, Firebase Storage
 - Midtrans, Resend, Upstash Redis
 
 ## Setup
