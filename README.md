@@ -12,7 +12,8 @@ Frontend repository: <link-repo-frontend-mu>
 - Express 5
 - PostgreSQL (Neon) + Prisma 7 + pgvector
 - Firebase Auth, Gemini Flash AI 2.5, Firebase Storage
-- Midtrans, Resend, Upstash Redis
+- Midtrans, Upstash Redis
+- Railway
 
 ## Setup
 

@@ -33,10 +33,6 @@ const envSchema = z.object({
   MIDTRANS_SERVER_KEY: z.string().optional(),
   MIDTRANS_CLIENT_KEY: z.string().optional(),
   MIDTRANS_IS_PRODUCTION: z.coerce.boolean().default(false),
-
-  // Email
-  RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().default('noreply@eventhub.id').optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
