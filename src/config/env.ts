@@ -32,7 +32,10 @@ const envSchema = z.object({
   // Midtrans
   MIDTRANS_SERVER_KEY: z.string().optional(),
   MIDTRANS_CLIENT_KEY: z.string().optional(),
-  MIDTRANS_IS_PRODUCTION: z.coerce.boolean().default(false),
+  MIDTRANS_IS_PRODUCTION: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
 });
 
 const parsed = envSchema.safeParse(process.env);
