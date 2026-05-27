@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "ca2993be-ba74-4c41-a6f6-bbd3a5cdffb2",
-    "name": "EevntHub-backend",
+    "name": "EventHub-backend",
     "description": "Dokumentasi untuk membantu testing bisa dilihat disini:  \n[https://github.com/dimaswirabakti/eventhub-backend/blob/main/docs/API.md](https://github.com/dimaswirabakti/eventhub-backend/blob/main/docs/API.md)\n\nKalau not found berarti repository github-nya masih private😅.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "37124877"
@@ -44,7 +44,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"role\": \"EO\",\n    \"name\": \"Aditya Pranawa\",\n    \"profile\": {\n        \"organizationName\": \"Garuda Ventures Network\",\n        \"organizationType\": \"COMMUNITY\",\n        \"campus\": \"BINUS University\",\n        \"phoneNumber\": \"081298765432\",\n        \"city\": \"Jakarta\",\n        \"description\": \"Komunitas venture capital dan startup yang berfokus pada pengembangan ekosistem investasi digital di Indonesia.\"\n    }\n}",
+              "raw": "{\n    \"role\": \"EO\",\n    \"name\": \"Mang Dimas\",\n    \"profile\": {\n        \"organizationName\": \"Forkom UKM UGM\",\n        \"organizationType\": \"COMMUNITY\",\n        \"campus\": \"Universitas Gadjah Mada\",\n        \"phoneNumber\": \"08123456789\",\n        \"city\": \"Yogyakarta\",\n        \"description\": \"Forum Komunikasi Unit Kegiatan Mahasiswa (Forkom UKM UGM) adalah wadah koordinasi, komunikasi, dan perhimpunan seluruh Unit Kegiatan Mahasiswa di Universitas Gadjah Mada. Organisasi ini berfungsi sebagai payung koordinasi antar-UKM dan perwakilan mahasiswa tingkat universitas.\"\n    }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -148,7 +148,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Dims Wira Bakti\",\n    \"description\": \"Badan Eksekutif Mahasiswa FT UGM, aktif mengadakan event teknologi dan kewirausahaan untuk mahasiswa.\",\n    \"phoneNumber\": \"081234567890\"\n}",
+              "raw": "{\n    \"name\": \"Nyoman Dimas\",\n    \"description\": \"Forkom UKM UGM adalah wadah koordinasi, komunikasi, dan perhimpunan seluruh Unit Kegiatan Mahasiswa di Universitas Gadjah Mada.\",\n    \"phoneNumber\": \"08987654321\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -175,7 +175,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"description\": \"Catalyst Ventures adalah VC firm yang fokus pada early-stage startup di sektor teknologi. Kami berinvestasi pada AI, fintech, dan SaaS dengan mission mendukung ekosistem startup Indonesia.\",\n    \"targetAudience\": \"Founder startup tech, developer profesional, dan engineer muda yang tertarik dengan AI dan kewirausahaan.\",\n    \"preferences\": {\n        \"preferredCategories\": [\n            \"TECHNOLOGY\",\n            \"BUSINESS\",\n            \"COMPETITION\"\n        ],\n        \"preferredAudienceAgeMin\": 20,\n        \"preferredAudienceAgeMax\": 35,\n        \"preferredInterests\": [\n            \"AI\",\n            \"startup\",\n            \"fintech\",\n            \"machine learning\",\n            \"entrepreneurship\"\n        ]\n    }\n}",
+              "raw": "{\n    \"description\": \"EDITED DESCRIPTION: Konsultan pengembangan aplikasi enterprise. Membantu perusahaan adopsi machine learning dan kecerdasan buatan untuk meningkatkan produktivitas.\",\n    \"targetAudience\": \"Calon developer muda yang tertarik dengan AI dan teknologi modern.\",\n    \"preferences\": {\n        \"preferredCategories\": [\n            \"TECHNOLOGY\",\n            \"BUSINESS\",\n            \"COMPETITION\"\n        ],\n        \"preferredAudienceAgeMin\": 20,\n        \"preferredAudienceAgeMax\": 35,\n        \"preferredInterests\": [\n            \"AI\",\n            \"startup\",\n            \"fintech\",\n            \"machine learning\",\n            \"entrepreneurship\"\n        ]\n    }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -246,7 +246,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"title\": \"TechFest UGM 2026\",\n    \"description\": \"Festival teknologi tahunan terbesar di UGM dengan peserta dari berbagai universitas se-Indonesia. Menampilkan keynote speaker, workshop coding, hackathon, dan startup showcase.\",\n    \"category\": \"TECHNOLOGY\",\n    \"theme\": \"AI & Future of Work\",\n    \"startDate\": \"2026-08-15\",\n    \"endDate\": \"2026-08-17\",\n    \"city\": \"Yogyakarta\",\n    \"venue\": \"Grha Sabha Pramana UGM\",\n    \"isOnline\": false,\n    \"expectedAttendees\": 2000,\n    \"audienceAgeMin\": 18,\n    \"audienceAgeMax\": 25,\n    \"audienceInterests\": [\n        \"technology\",\n        \"startup\",\n        \"AI\",\n        \"programming\"\n    ]\n}",
+                  "raw": "{\n    \"title\": \"Gelanggang Expo UGM 2026\",\n    \"description\": \"Gelanggang Expo UGM (Gelex UGM) adalah pameran tahunan yang diselenggarakan oleh Universitas Gadjah Mada (UGM) bersama Forum Komunikasi UKM UGM. Acara ini bertujuan untuk memperkenalkan Unit Kegiatan Mahasiswa (UKM) dan berbagai komunitas kepada mahasiswa baru agar mereka dapat menyalurkan minat dan bakat di luar akademik\",\n    \"category\": \"SOCIAL\",\n    \"theme\": \"Semangat dan kebersamaan\",\n    \"startDate\": \"2026-08-23\",\n    \"endDate\": \"2026-08-25\",\n    \"city\": \"Yogyakarta\",\n    \"venue\": \"Lapangan Pancasila UGM\",\n    \"isOnline\": false,\n    \"expectedAttendees\": 10000,\n    \"audienceAgeMin\": 17,\n    \"audienceAgeMax\": 25,\n    \"audienceInterests\": [\n        \"SPORTS\",\n        \"ARTS\",\n        \"SPIRITUALITY\",\n        \"HARD SKILL\"\n    ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -308,7 +308,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "// semua field optional, kirim yang mau diubah saja\n{\n    \"title\": \"TechFest UGM 2026 - Updated Edition\",\n    \"description\": \"Festival teknologi terbesar di Yogyakarta, kini dengan rangkaian acara yang lebih lengkap termasuk startup pitch competition dan AI workshop.\",\n    \"expectedAttendees\": 2500,\n    \"audienceInterests\": [\n        \"technology\",\n        \"startup\",\n        \"AI\",\n        \"programming\",\n        \"entrepreneurship\"\n    ]\n}\n// kalau title diubah, slug otomatis di-regenerate.\n// Kalau event sudah PUBLISHED dan field embed-relevant berubah, embedding di-refresh otomatis.",
+                  "raw": "// semua field optional, kirim yang mau diubah saja\n{\n    \"title\": \"Gelanggang Expo UGM 2026 - Updated Edition\",\n    \"description\": \"UPDATED DESCRIPTION: Gelex UGM adalah pameran tahunan yang diselenggarakan oleh Universitas Gadjah Mada (UGM).\",\n    \"expectedAttendees\": 20000,\n    \"audienceInterests\": [\n        \"SPORTS\",\n        \"ARTS\",\n        \"SPIRITUALITY\",\n        \"HARD SKILL\",\n        \"entrepreneurship\"\n    ]\n}\n// kalau title diubah, slug otomatis di-regenerate.\n// Kalau event sudah PUBLISHED dan field embed-relevant berubah, embedding di-refresh otomatis.",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -643,7 +643,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"tone\": \"PERSUASIVE\",\n    \"targetSponsorIndustry\": \"Technology and Telecommunications\",\n    \"additionalContext\": \"Acara kolaborasi dengan komunitas developer Indonesia, banyak founder startup yang akan hadir\"\n}",
+              "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"tone\": \"FORMAL\",\n    \"targetSponsorIndustry\": \"FnB and Telecommunications\",\n    \"additionalContext\": \"ajang organisasi kemahasiswaan terbesar di Indonesia, di mana Anda bisa melihat kegiatan dari puluhan UKM yang terbagi dalam empat bidang utama\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -852,7 +852,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"tierId\": \"{{tier_id}}\",\n    \"message\": \"Halo, kami dari Catalyst Ventures tertarik untuk mendukung TechFest UGM 2026. Acara Anda sangat sejalan dengan misi kami untuk mendukung ekosistem startup teknologi di Indonesia.\"\n}",
+                  "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"tierId\": \"{{tier_id}}\",\n    \"message\": \"Halo, kami dari PT Codify Indonesia tertarik untuk mendukung Gelex UGM 2026. Kerjasama ini sangat menarik dan pastinya akan menguntungkan kedua belah pihak.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1096,7 +1096,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"companyProfileId\": \"{{company_profile_id}}\",\n    \"tierId\": \"{{tier_id}}\",\n    \"message\": \"Halo Tim Catalyst Ventures, kami dari BEM FT UGM ingin mengundang Anda menjadi sponsor TechFest UGM 2026. Event ini akan dihadiri 2000+ peserta dari berbagai universitas, termasuk founders muda dan engineer talented. Sangat sesuai dengan misi Catalyst untuk mendukung ekosistem startup. Kami menawarkan paket Gold dengan benefit eksklusif - booth utama, keynote speaker slot, dan branding masif. Mari berdiskusi lebih lanjut!\"\n}",
+                  "raw": "{\n    \"eventId\": \"{{event_id}}\",\n    \"companyProfileId\": \"{{company_profile_id}}\",\n    \"tierId\": \"{{tier_id}}\",\n    \"message\": \"Halo Tim Codify Indonesia , kami dari Gelex UGM ingin mengundang Anda menjadi sponsor Gelanggang Expo UGM 2026. Event ini akan dihadiri 25000+ mahasiswa. Kami menawarkan paket Gold dengan benefit eksklusif - booth utama, keynote speaker slot, dan branding masif. Mari berdiskusi lebih lanjut!\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1399,7 +1399,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"content\": \"Halo, ini adalah fitur kirim pesan.\"\n}",
+              "raw": "{\n    \"content\": \"Halo, Kami telah mengirimkan penawaran, mari bernegosiasi.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1467,7 +1467,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"test-eo@example.com\",\n  \"password\": \"test12345\",\n  \"returnSecureToken\": true\n}",
+          "raw": "{\n  \"email\": \"test-eo10@example.com\",\n  \"password\": \"test12345\",\n  \"returnSecureToken\": true\n}",
           "options": {
             "raw": {
               "language": "json"
