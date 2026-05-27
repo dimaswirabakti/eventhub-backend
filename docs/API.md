@@ -77,6 +77,26 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 
 ---
 
+## Rate Limiting
+
+API menerapkan rate limiting. Kalau limit terlampaui, response: `429 Too Many Requests` dengan header `Retry-After` (detik) dan pesan kapan bisa coba lagi.
+
+| Scope                                  | Limit           | Per  |
+| -------------------------------------- | --------------- | ---- |
+| Auth (`/auth/register`, `/auth/login`) | 5 req / menit   | IP   |
+| AI (`/ai/*`)                           | 10 req / menit  | User |
+| Global (semua endpoint)                | 100 req / menit | IP   |
+
+**Response headers** (di setiap request):
+
+- `X-RateLimit-Limit` — total kuota window
+- `X-RateLimit-Remaining` — sisa kuota
+- `X-RateLimit-Reset` — timestamp (ms) kapan window reset
+
+**Saran untuk frontend:** kalau dapat 429, tampilkan pesan "terlalu banyak percobaan, coba lagi dalam X detik" dan disable tombol sampai `Retry-After` lewat. Untuk fitur AI, hindari spam klik tombol generate.
+
+---
+
 ## Endpoints Overview
 
 ### 🔐 Auth
@@ -179,7 +199,7 @@ Firebase ID token expired setelah **1 jam**. Frontend harus refresh token via Fi
 }
 ```
 
-### 💾 Saved Events (Wishlist)
+### 💾 Saved Events
 
 Company only. Idempotent operations.
 
@@ -456,12 +476,21 @@ Content-Type: application/json
   "data": {
     "proposal": { "id": "...", "source": "GENERATED", ... },
     "content": {
+      "title": "...",
       "executiveSummary": "...",
+      "aboutOrganizer": "...",
       "eventBackground": "...",
+      "eventTheme": "...",
       "objectives": ["...", "..."],
+      "activities": ["...", "..."],
       "targetAudience": "...",
-      "whyThisEvent": "...",
-      "sponsorshipBenefits": ["...", "..."],
+      "audienceReach": "...",
+      "whySponsor": "...",
+      "sponsorshipPackages": [
+        { "tierName": "...", "price": "Rp ...", "benefits": ["...", "..."] }
+      ],
+      "generalBenefits": ["...", "..."],
+      "closingStatement": "...",
       "callToAction": "..."
     }
   }
@@ -471,9 +500,3 @@ Content-Type: application/json
 `tone` enum: `FORMAL | CASUAL | PERSUASIVE`
 
 ---
-
-## Belum Dibuat (Coming Soon)
-
-- Messaging (async chat dalam offer)
-- Midtrans payment integration
-- File upload ke Google Cloud Storage

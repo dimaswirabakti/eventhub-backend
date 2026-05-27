@@ -37,3 +37,4 @@ Server akan jalan di http://localhost:8080
 - [✅] Payment (Midtrans top-up)
 - [✅] File Storage (GCS upload)
 - [✅] Messaging (async chat)
+- [✅] Rate Limiting (Upstash Redis)
