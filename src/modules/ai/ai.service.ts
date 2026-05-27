@@ -39,13 +39,13 @@ export const generateProposal = async (userId: string, input: GenerateProposalIn
     .map((t) => `- ${t.name}: Rp ${t.price.toLocaleString('id-ID')} (${t.benefits.join(', ')})`)
     .join('\n');
 
-  const prompt = `Anda adalah konsultan profesional yang membantu mahasiswa Indonesia membuat proposal sponsorship event.
+  const prompt = `Anda adalah konsultan profesional yang membantu panitia event kampus di Indonesia menyusun proposal sponsorship yang menarik dan profesional, mengikuti struktur proposal sponsorship event kampus yang umum digunakan di Indonesia.
 
-Buatlah proposal sponsorship dalam BAHASA INDONESIA yang profesional dan persuasif berdasarkan data event berikut:
+Buatlah proposal sponsorship dalam BAHASA INDONESIA berdasarkan data event berikut:
 
 **Detail Event:**
 - Nama: ${event.title}
-- Organisasi: ${event.eoProfile.organizationName}${event.eoProfile.campus ? ` (${event.eoProfile.campus})` : ''}
+- Penyelenggara: ${event.eoProfile.organizationName}${event.eoProfile.campus ? ` (${event.eoProfile.campus})` : ''}
 - Tema: ${event.theme ?? 'Tidak spesifik'}
 - Kategori: ${event.category}
 - Tanggal: ${event.startDate.toLocaleDateString('id-ID')} - ${event.endDate.toLocaleDateString('id-ID')}
@@ -57,7 +57,7 @@ Buatlah proposal sponsorship dalam BAHASA INDONESIA yang profesional dan persuas
 - Rentang usia: ${event.audienceAgeMin}-${event.audienceAgeMax} tahun
 - Minat: ${event.audienceInterests.join(', ')}
 
-**Paket Sponsorship:**
+**Paket Sponsorship (Pilihan Kerjasama):**
 ${tiersContext || 'Belum ditentukan'}
 
 ${input.targetSponsorIndustry ? `**Target industri sponsor:** ${input.targetSponsorIndustry}` : ''}
@@ -65,16 +65,24 @@ ${input.additionalContext ? `**Konteks tambahan:** ${input.additionalContext}` :
 
 **Tone yang diinginkan:** ${input.tone}
 
-Buatlah proposal dengan struktur:
-1. Executive Summary (2-3 kalimat menarik)
-2. Latar belakang event
-3. Tujuan event (3-5 poin)
-4. Penjelasan target audiens (1 paragraf)
-5. Mengapa sponsor harus terlibat di event ini (1 paragraf persuasif)
-6. Benefit untuk sponsor (5-7 poin konkret)
-7. Call to action (1 paragraf penutup yang mendorong sponsor untuk action)
+Susun proposal mengikuti struktur proposal sponsorship event kampus Indonesia, dengan bagian-bagian berikut:
 
-Gunakan bahasa yang ${input.tone === 'CASUAL' ? 'santai tapi tetap profesional' : input.tone === 'PERSUASIVE' ? 'sangat persuasif dengan emotional appeal' : 'formal dan profesional'}.`;
+1. **title** — Judul proposal sponsorship yang menarik (contoh format: "Proposal Sponsorship [Nama Event]")
+2. **executiveSummary** — Ringkasan eksekutif 2-3 kalimat yang langsung menarik perhatian calon sponsor
+3. **aboutOrganizer** — Profil singkat penyelenggara event (organisasi/kampus), bangun kredibilitas
+4. **eventBackground** — Latar belakang dan urgensi penyelenggaraan event (1-2 paragraf)
+5. **eventTheme** — Penjelasan tema besar event dan relevansinya
+6. **objectives** — Tujuan penyelenggaraan event (3-5 poin)
+7. **activities** — Rangkaian kegiatan atau susunan acara utama (3-7 poin, kembangkan secara masuk akal dari deskripsi event)
+8. **targetAudience** — Penjelasan detail profil target audiens (1 paragraf)
+9. **audienceReach** — Daya tarik event: jangkauan, skala peserta, demografi, dan potensi exposure untuk sponsor (1 paragraf dengan angka konkret)
+10. **whySponsor** — Argumen persuasif mengapa sponsor harus terlibat di event ini (1 paragraf, fokus pada value untuk brand)
+11. **sponsorshipPackages** — Untuk SETIAP paket sponsorship yang tersedia, buatkan objek dengan: tierName (nama paket), price (harga dalam format "Rp X.XXX.XXX"), dan benefits (daftar benefit konkret untuk paket itu). Gunakan data paket di atas. Kalau benefit kurang detail, kembangkan secara profesional dan masuk akal.
+12. **generalBenefits** — Kontraprestasi/benefit umum yang didapat SEMUA sponsor terlepas dari paket (5-7 poin, misal: peliputan media sosial, sertifikat, exposure brand)
+13. **closingStatement** — Pernyataan penutup yang meyakinkan dan profesional (1 paragraf)
+14. **callToAction** — Ajakan konkret untuk sponsor mengambil langkah selanjutnya, sebutkan bahwa mereka dapat menghubungi penyelenggara untuk diskusi lebih lanjut
+
+Gunakan bahasa yang ${input.tone === 'CASUAL' ? 'santai tapi tetap profesional' : input.tone === 'PERSUASIVE' ? 'sangat persuasif dengan emotional appeal yang kuat' : 'formal dan profesional'}. Pastikan setiap bagian terisi dengan konten yang spesifik dan relevan dengan data event, bukan placeholder generik.`;
 
   // Call Gemini dengan structured output
   let aiResult: ProposalContent;
@@ -87,21 +95,46 @@ Gunakan bahasa yang ${input.tone === 'CASUAL' ? 'santai tapi tetap profesional' 
         responseSchema: {
           type: Type.OBJECT,
           properties: {
+            title: { type: Type.STRING },
             executiveSummary: { type: Type.STRING },
+            aboutOrganizer: { type: Type.STRING },
             eventBackground: { type: Type.STRING },
+            eventTheme: { type: Type.STRING },
             objectives: { type: Type.ARRAY, items: { type: Type.STRING } },
+            activities: { type: Type.ARRAY, items: { type: Type.STRING } },
             targetAudience: { type: Type.STRING },
-            whyThisEvent: { type: Type.STRING },
-            sponsorshipBenefits: { type: Type.ARRAY, items: { type: Type.STRING } },
+            audienceReach: { type: Type.STRING },
+            whySponsor: { type: Type.STRING },
+            sponsorshipPackages: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  tierName: { type: Type.STRING },
+                  price: { type: Type.STRING },
+                  benefits: { type: Type.ARRAY, items: { type: Type.STRING } },
+                },
+                required: ['tierName', 'price', 'benefits'],
+              },
+            },
+            generalBenefits: { type: Type.ARRAY, items: { type: Type.STRING } },
+            closingStatement: { type: Type.STRING },
             callToAction: { type: Type.STRING },
           },
           required: [
+            'title',
             'executiveSummary',
+            'aboutOrganizer',
             'eventBackground',
+            'eventTheme',
             'objectives',
+            'activities',
             'targetAudience',
-            'whyThisEvent',
-            'sponsorshipBenefits',
+            'audienceReach',
+            'whySponsor',
+            'sponsorshipPackages',
+            'generalBenefits',
+            'closingStatement',
             'callToAction',
           ],
         },

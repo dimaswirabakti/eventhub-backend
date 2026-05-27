@@ -18,12 +18,23 @@ export type ReviewProposalInput = z.infer<typeof reviewProposalSchema>;
 
 // AI RESPONSE TYPES
 export interface ProposalContent {
+  title: string;
   executiveSummary: string;
+  aboutOrganizer: string;
   eventBackground: string;
+  eventTheme: string;
   objectives: string[];
+  activities: string[];
   targetAudience: string;
-  whyThisEvent: string;
-  sponsorshipBenefits: string[];
+  audienceReach: string;
+  whySponsor: string;
+  sponsorshipPackages: Array<{
+    tierName: string;
+    price: string;
+    benefits: string[];
+  }>;
+  generalBenefits: string[];
+  closingStatement: string;
   callToAction: string;
 }
 
