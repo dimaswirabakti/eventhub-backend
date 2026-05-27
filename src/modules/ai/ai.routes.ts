@@ -3,10 +3,12 @@ import { validate } from '@/middlewares/validate.middleware.js';
 import { requireAuth, requireRole } from '@/middlewares/auth.middleware.js';
 import { generateProposalSchema, reviewProposalSchema } from './ai.schema.js';
 import * as aiController from './ai.controller.js';
+import { aiRateLimiter } from '@/middlewares/rate-limit.middleware.js';
 
 const router: Router = Router();
 
 router.use(requireAuth, requireRole('EO'));
+router.use(aiRateLimiter);
 
 router.post('/proposal-builder', validate(generateProposalSchema), aiController.generateProposal);
 

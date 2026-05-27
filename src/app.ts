@@ -16,9 +16,12 @@ import { offersRoutes } from '@/modules/offers/offers.routes.js';
 import { pitchesRoutes } from '@/modules/offers/pitches.routes.js';
 import { billingRoutes } from '@/modules/billing/billing.routes.js';
 import { messagesRoutes } from '@/modules/messages/messages.routes.js';
+import { globalRateLimiter } from '@/middlewares/rate-limit.middleware.js';
 
 export const createApp = (): Express => {
   const app = express();
+
+  app.set('trust proxy', 1);
 
   // Security & performance
   app.use(helmet());
@@ -41,6 +44,9 @@ export const createApp = (): Express => {
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  // 100 req/min per IP
+  app.use(globalRateLimiter);
 
   // API routes
   app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
