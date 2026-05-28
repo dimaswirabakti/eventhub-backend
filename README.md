@@ -15,6 +15,9 @@ Frontend repository: <link-repo-frontend-mu>
 - Midtrans, Upstash Redis
 - Railway
 
+## System Architecture
+![System Architecture](./docs/system_architecture.png)
+
 ## Setup
 
 ```bash
