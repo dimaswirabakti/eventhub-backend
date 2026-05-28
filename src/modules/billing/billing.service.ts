@@ -108,7 +108,14 @@ export const createTopup = async (userId: string, packageId: string) => {
   });
   if (!user) throw new NotFoundError('User');
 
-  const orderId = `EVTHUB-${packageId}-${randomUUID()}`;
+  const orderId = `EVTHUB-${packageId}-${randomUUID().replace(/-/g, '').slice(0, 16)}`;
+
+  if (orderId.length > 50) {
+    throw new AppError(
+      `Generated order ID exceeds 50 chars: ${orderId.length}`,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
 
   // Buat record TokenTransaction
   const transaction = await prisma.tokenTransaction.create({
